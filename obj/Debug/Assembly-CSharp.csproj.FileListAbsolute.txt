@@ -1,0 +1,2 @@
+D:\Users\Methlodis\Voxel_Octree_Object\obj\Debug\Assembly-CSharp.csprojAssemblyReference.cache
+D:\Users\Methlodis\Voxel_Octree_Object\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache
