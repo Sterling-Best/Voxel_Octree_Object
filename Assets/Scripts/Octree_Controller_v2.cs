@@ -35,6 +35,7 @@ public class Octree_Controller_v2: MonoBehaviour {
         this.octreepos = this.transform.position;
         this.octreelimitpos = octreepos + new Vector3(octreesize, octreesize, octreesize);
 
+
         //Test 1
         this.octree.Add("", new Octree_Node(this, "", 0));
         this.octree.Add("000", new Octree_Node(this, "000", 0));
@@ -58,7 +59,7 @@ public class Octree_Controller_v2: MonoBehaviour {
         this.octree.Add("000011110", new Octree_Node(this, "000011110", 2));
         this.octree.Add("000011111", new Octree_Node(this, "000011111", 2));
         this.octree.Add("000100", new Octree_Node(this, "000100", 3));
-        this.octree.Add("000101", new Octree_Node(this, "000101", 1));
+        this.octree.Add("000101", new Octree_Node(this, "000101", 3));
         this.octree.Add("000110", new Octree_Node(this, "000110", 1));
         this.octree.Add("000111", new Octree_Node(this, "000111", 1));
 
@@ -67,6 +68,8 @@ public class Octree_Controller_v2: MonoBehaviour {
         PreRender();
 
 	}
+
+
 	
 	// Update is called once per frame
 	void Update () {
