@@ -10,13 +10,16 @@ public class Octree_LocationCode : MonoBehaviour
     void Start()
     {
         //Morton Test
-        Vector3 formercode = new Vector3(7, 4, 13);
+        Vector3 formercode = new Vector3(7, 3, 2);
         Debug.Log("Morton Code Test: " + formercode.ToString());
-        long code = this.Vec3ToLoc(formercode, 4);
+        long code = this.Vec3ToLoc(formercode, 3);
         Debug.Log("Morton Code: " + code.ToString());
         Vector3 vec = this.LocToVec3(code);
         Debug.Log("Vector3 Locatio: " + vec.ToString());
-
+        long code2 = this.CalculateAdjacent(code, 'x', -1);
+        Debug.Log("Adjacent Search Up: " + code2);
+        Vector3 vec2 = this.LocToVec3(code2);
+        Debug.Log("Vector3 Location: " + vec2.ToString());
     }
 
     // Update is called once per frame
@@ -25,14 +28,13 @@ public class Octree_LocationCode : MonoBehaviour
 
     }
 
-
     //Encoding Location Code (Morton Code)
 
     public long Vec3ToLoc(Vector3 vec, int depth)
     {
         long answer = 0;
         //interleave vectors
-        answer |= part1by2(vec.x) | part1by2(vec.y) << 1 | part1by2(vec.z) << 2;
+        answer |= part1by2(vec.z) | part1by2(vec.y) << 1 | part1by2(vec.x) << 2;
         //Add depth Identifier
         if (depth > 0)
         {
@@ -70,9 +72,9 @@ public class Octree_LocationCode : MonoBehaviour
         Vector3 vec = new Vector3(0, 0, 0);
         int depthmodifier = (Convert.ToInt32(Math.Pow(8, Convert.ToInt32(Math.Log(x, 8)))));
         x = (x ^ depthmodifier);
-        vec.x = collapseby2(x);
+        vec.z = collapseby2(x);
         vec.y = collapseby2(x >> 1);
-        vec.z = collapseby2(x >> 2);
+        vec.x = collapseby2(x >> 2);
         return vec;
     }
 
@@ -85,4 +87,44 @@ public class Octree_LocationCode : MonoBehaviour
         x = (x ^ (x >> 16)) & 0x1f00000000ffff;
         return x;
     }
+
+    //Searches
+
+    //Neighbor Search
+
+    public long CalculateAdjacent(long m, char axis, int distance)
+    {
+        int depth = Convert.ToInt32(Math.Log(m, 8));
+        int depthmodifier = (Convert.ToInt32(Math.Pow(8, depth)));
+        m = (m ^ depthmodifier);
+        long n;
+        if (axis == 'x')
+        {
+            n = collapseby2(m >> 2);
+            Debug.Log(n);
+            if (0 < (n + distance) && (n + distance) < Math.Pow(2, depth))
+            {
+                m = (m & (0x36DB6DB6DB6DB6DB)) | (part1by2(n + distance) << 2);
+            }
+        }
+        else if (axis == 'y')
+        {
+            n = collapseby2(m >> 1);
+            if (0 < (n + distance) && (n + distance) < Math.Pow(2, depth))
+            {
+                m = (m & (0x5B6DB6DB6DB6DB6D)) | (part1by2(n + distance) << 1);
+            }
+        }
+        else if (axis == 'z')
+        {
+            n = collapseby2(m);
+            if (0 < (n + distance) && (n + distance) < Math.Pow(2, depth))
+            {
+                m = (m & (0x6DB6DB6DB6DB6DB6)) | (part1by2(n + distance));
+            }
+        }
+        m = (m | depthmodifier);
+        return m;
+    }
+
 }
