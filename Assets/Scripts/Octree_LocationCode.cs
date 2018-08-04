@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Octree_LocationCode : MonoBehaviour
 {
+    
 
     // Use this for initialization
     void Start()
@@ -16,7 +17,7 @@ public class Octree_LocationCode : MonoBehaviour
         Debug.Log("Morton Code: " + code.ToString());
         Vector3 vec = this.LocToVec3(code);
         Debug.Log("Vector3 Locatio: " + vec.ToString());
-        long code2 = this.CalculateAdjacent(code, 'x', -1);
+        long code2 = this.CalculateAdjacent(code, 0, 1);
         Debug.Log("Adjacent Search Up: " + code2);
         Vector3 vec2 = this.LocToVec3(code2);
         Debug.Log("Vector3 Location: " + vec2.ToString());
@@ -28,8 +29,11 @@ public class Octree_LocationCode : MonoBehaviour
 
     }
 
+    //--Encoding/Decoding--//
+
     //Encoding Location Code (Morton Code)
 
+    //TODO: Finish Vec3ToLoc() Documentation
     public long Vec3ToLoc(Vector3 vec, int depth)
     {
         long answer = 0;
@@ -44,86 +48,99 @@ public class Octree_LocationCode : MonoBehaviour
         return answer;
     }
 
-    private long part1by2(long x)
+    //TODO: Finish part1by2(long) Documentation
+    private long part1by2(long n)
     {
-        x &= 0x000003ff;
-        x = (x | x << 16) & 0x1f0000ff0000ff;
-        x = (x | x << 8) & 0x100f00f00f00f00f;
-        x = (x | x << 4) & 0x10c30c30c30c30c3;
-        x = (x | x << 2) & 0x1249249249249249;
-        return x;
+        n &= 0x000003ff;
+        n = (n | n << 16) & 0x1f0000ff0000ff;
+        n = (n | n << 8) & 0x100f00f00f00f00f;
+        n = (n | n << 4) & 0x10c30c30c30c30c3;
+        n = (n | n << 2) & 0x1249249249249249;
+        return n;
     }
 
+
+    //TODO: part1by2(int) figure out why this wasn't working
     //public long part1by2(int a)
     //{
     //    return part1by2(Convert.ToInt32(a));
     //}
 
+    //TODO: Finish part1by2(float) Documentation
     public long part1by2(float a)
     {
-        //TODO: Make sure 
         return part1by2(Convert.ToInt32(a));
     }
 
     //Decoding Morton Code
 
-    public Vector3 LocToVec3(long x)
+    //TODO: Finish LocToVec3() Documentation
+    public Vector3 LocToVec3(long m)
     {
         Vector3 vec = new Vector3(0, 0, 0);
-        int depthmodifier = (Convert.ToInt32(Math.Pow(8, Convert.ToInt32(Math.Log(x, 8)))));
-        x = (x ^ depthmodifier);
-        vec.z = collapseby2(x);
-        vec.y = collapseby2(x >> 1);
-        vec.x = collapseby2(x >> 2);
+        int depthmodifier = (Convert.ToInt32(Math.Pow(8, Convert.ToInt32(Math.Log(m, 8)))));
+        m = (m ^ depthmodifier);
+        vec.z = collapseby2(m);
+        vec.y = collapseby2(m >> 1);
+        vec.x = collapseby2(m >> 2);
         return vec;
     }
 
-    private long collapseby2(long x)
+    //TODO: Finish collapseby2() Documentation
+    private long collapseby2(long n)
     {
-        x &= 0x1249249249249249;
-        x = (x ^ (x >> 2)) & 0x10c30c30c30c30c3;
-        x = (x ^ (x >> 4)) & 0x100f00f00f00f00f;
-        x = (x ^ (x >> 8)) & 0x1f0000ff0000ff;
-        x = (x ^ (x >> 16)) & 0x1f00000000ffff;
-        return x;
+        n &= 0x1249249249249249;
+        n = (n ^ (n >> 2)) & 0x10c30c30c30c30c3;
+        n = (n ^ (n >> 4)) & 0x100f00f00f00f00f;
+        n = (n ^ (n >> 8)) & 0x1f0000ff0000ff;
+        n = (n ^ (n >> 16)) & 0x1f00000000ffff;
+        return n;
     }
 
-    //Searches
+    //--Searches--// 
 
-    //Neighbor Search
+    //Neighbor/Adjacent "Search"
 
-    public long CalculateAdjacent(long m, char axis, int distance)
+    //Calculates what the adjacent node (with offset) is from another code.
+    //TODO: Documentation: CalculateAdjacent() 
+    //TODO: UnitTests: CalculateAdjacent() 
+    /// <summary>
+    /// Calculates adjacent code (with offset <paramref name="distance"/>) from the specified int code <paramref name="m"/>. Returns an int code.
+    /// </summary>
+    /// <param name="m"></param>
+    /// <param name="axis"></param>
+    /// <param name="distance"></param>
+    /// <returns>A long. The desired Location code.</returns>
+    /// <remarks>
+    /// 
+    /// </remarks>
+    public long CalculateAdjacent(long m, byte axis, int distance)
     {
         int depth = Convert.ToInt32(Math.Log(m, 8));
         int depthmodifier = (Convert.ToInt32(Math.Pow(8, depth)));
+        long[] axismask = { 0x6DB6DB6DB6DB6DB6, 0x5B6DB6DB6DB6DB6D, 0x36DB6DB6DB6DB6DB };
         m = (m ^ depthmodifier);
-        long n;
-        if (axis == 'x')
+        long n = collapseby2(m >> axis);
+        if (0 < (n + distance) && (n + distance) < Math.Pow(2, depth))
         {
-            n = collapseby2(m >> 2);
-            Debug.Log(n);
-            if (0 < (n + distance) && (n + distance) < Math.Pow(2, depth))
-            {
-                m = (m & (0x36DB6DB6DB6DB6DB)) | (part1by2(n + distance) << 2);
-            }
-        }
-        else if (axis == 'y')
-        {
-            n = collapseby2(m >> 1);
-            if (0 < (n + distance) && (n + distance) < Math.Pow(2, depth))
-            {
-                m = (m & (0x5B6DB6DB6DB6DB6D)) | (part1by2(n + distance) << 1);
-            }
-        }
-        else if (axis == 'z')
-        {
-            n = collapseby2(m);
-            if (0 < (n + distance) && (n + distance) < Math.Pow(2, depth))
-            {
-                m = (m & (0x6DB6DB6DB6DB6DB6)) | (part1by2(n + distance));
-            }
+            // TODO: Optimization: Possible optimization in injecting (n + distance) value back into m
+            m = (m & (axismask[axis])) | (part1by2(n + distance) << axis);
         }
         m = (m | depthmodifier);
+        return m;
+    }
+
+    //Offset Search
+
+    //TODO: Documentation: CalculateOffset() 
+    //TODO: UnitTests: CalculateOffest() 
+    public long CalculateOffset(long m, Vector3 offset)
+    {
+        //TODO: Optimization: Look into similar set-up to CalculateAdjacent() to reduce operations (unpacking/packing).
+        int depth = Convert.ToInt32(Math.Log(m, 8));
+        Vector3 mvec = LocToVec3(m);
+        mvec += offset;
+        m = Vec3ToLoc(mvec, depth);
         return m;
     }
 
