@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Octree_LocationCode : MonoBehaviour
@@ -36,16 +37,16 @@ public class Octree_LocationCode : MonoBehaviour
     //TODO: Finish Vec3ToLoc() Documentation
     public long Vec3ToLoc(Vector3 vec, int depth)
     {
-        long answer = 0;
+        long m = 0;
         //interleave vectors
-        answer |= part1by2(vec.z) | part1by2(vec.y) << 1 | part1by2(vec.x) << 2;
+        m |= part1by2(vec.z) | part1by2(vec.y) << 1 | part1by2(vec.x) << 2;
         //Add depth Identifier
         if (depth > 0)
         {
             int depthmodifier = Convert.ToInt32(Math.Pow(8, depth));
-            answer = (answer | depthmodifier);
+            m = (m | depthmodifier);
         }
-        return answer;
+        return m;
     }
 
     //TODO: Finish part1by2(long) Documentation
@@ -116,12 +117,12 @@ public class Octree_LocationCode : MonoBehaviour
     /// </remarks>
     public long CalculateAdjacent(long m, byte axis, int distance)
     {
-        int depth = Convert.ToInt32(Math.Log(m, 8));
+        byte depth = CalculateDepth(m);
         int depthmodifier = (Convert.ToInt32(Math.Pow(8, depth)));
         long[] axismask = { 0x6DB6DB6DB6DB6DB6, 0x5B6DB6DB6DB6DB6D, 0x36DB6DB6DB6DB6DB };
         m = (m ^ depthmodifier);
         long n = collapseby2(m >> axis);
-        if (0 < (n + distance) && (n + distance) < Math.Pow(2, depth))
+        if (WithinOctreeCheckInt(n + distance, depth))
         {
             // TODO: Optimization: Possible optimization in injecting (n + distance) value back into m
             m = (m & (axismask[axis])) | (part1by2(n + distance) << axis);
@@ -137,11 +138,55 @@ public class Octree_LocationCode : MonoBehaviour
     public long CalculateOffset(long m, Vector3 offset)
     {
         //TODO: Optimization: Look into similar set-up to CalculateAdjacent() to reduce operations (unpacking/packing).
-        int depth = Convert.ToInt32(Math.Log(m, 8));
+        byte depth = CalculateDepth(m);
         Vector3 mvec = LocToVec3(m);
         mvec += offset;
-        m = Vec3ToLoc(mvec, depth);
+        if (WithinOctreeCheckVec3(mvec, depth))
+        {
+            m = Vec3ToLoc(mvec, depth);
+        }
         return m;
+    }
+
+    //--Location Code Helpers--//
+
+    //Caluclate Depth
+    //TODO: Documentation: CalculateDepth()
+    //TODO: UnitTest: CalculateDepth()
+    public byte CalculateDepth(long m)
+    {
+        return Convert.ToByte(Math.Log(m, 8));
+    }
+
+    //Check if Within Octree
+
+    //TODO: Documentation: WithinOctreeInt()
+    //TODO: UnitTest: WithinOctreeInt()
+    private bool WithinOctreeCheckInt(long n, byte depth)
+    {
+        if (0 < n && n < Math.Pow(2, depth))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    //TODO: Documentation: WithinOctreeVec3()
+    //TODO: UnitTest: WithinOctreeVec3()
+    private bool WithinOctreeCheckVec3(Vector3 vec, byte depth)
+    {
+        double upperlimit = Math.Pow(2, depth);
+        if (new[] { vec.x, vec.y, vec.z }.All(x => (0 < x && x < upperlimit)))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
 }
