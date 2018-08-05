@@ -4,48 +4,35 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Octree_LocationCode : MonoBehaviour
+public class Octree_LocationCode
 {
-    
-
-    // Use this for initialization
-    void Start()
-    {
-        //Morton Test
-        Vector3 formercode = new Vector3(7, 3, 2);
-        Debug.Log("Morton Code Test: " + formercode.ToString());
-        long code = this.Vec3ToLoc(formercode, 3);
-        Debug.Log("Morton Code: " + code.ToString());
-        Vector3 vec = this.LocToVec3(code);
-        Debug.Log("Vector3 Locatio: " + vec.ToString());
-        long code2 = this.CalculateAdjacent(code, 0, 1);
-        Debug.Log("Adjacent Search Up: " + code2);
-        Vector3 vec2 = this.LocToVec3(code2);
-        Debug.Log("Vector3 Location: " + vec2.ToString());
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     //--Encoding/Decoding--//
 
     //Encoding Location Code (Morton Code)
 
     //TODO: Finish Vec3ToLoc() Documentation
+    //TODO: Allow for depths above 7 to be used.
     public long Vec3ToLoc(Vector3 vec, int depth)
     {
         long m = 0;
-        //interleave vectors
-        m |= part1by2(vec.z) | part1by2(vec.y) << 1 | part1by2(vec.x) << 2;
-        //Add depth Identifier
-        if (depth > 0)
+        int max = Convert.ToInt32(new[] { vec.x, vec.y, vec.z }.Max());
+        if (max >= Math.Pow(2, depth))
         {
-            int depthmodifier = Convert.ToInt32(Math.Pow(8, depth));
-            m = (m | depthmodifier);
+            throw new ArgumentException(String.Format("{0} is not within bounds of depth {1}", vec, depth), 
+                                      "vec");
         }
+        else
+        {
+            
+            m |= part1by2(vec.z) | part1by2(vec.y) << 1 | part1by2(vec.x) << 2;
+            //Add depth Identifier
+            if (depth > 0)
+            {
+                int depthmodifier = Convert.ToInt32(Math.Pow(8, depth));
+                m = (m | depthmodifier);
+            }
+        }
+        //interleave vectors
         return m;
     }
 
@@ -59,7 +46,6 @@ public class Octree_LocationCode : MonoBehaviour
         n = (n | n << 2) & 0x1249249249249249;
         return n;
     }
-
 
     //TODO: part1by2(int) figure out why this wasn't working
     //public long part1by2(int a)
@@ -81,14 +67,14 @@ public class Octree_LocationCode : MonoBehaviour
         Vector3 vec = new Vector3(0, 0, 0);
         int depthmodifier = (Convert.ToInt32(Math.Pow(8, Convert.ToInt32(Math.Log(m, 8)))));
         m = (m ^ depthmodifier);
-        vec.z = collapseby2(m);
-        vec.y = collapseby2(m >> 1);
-        vec.x = collapseby2(m >> 2);
+        vec.z = Collapseby2(m);
+        vec.y = Collapseby2(m >> 1);
+        vec.x = Collapseby2(m >> 2);
         return vec;
     }
 
     //TODO: Finish collapseby2() Documentation
-    private long collapseby2(long n)
+    private long Collapseby2(long n)
     {
         n &= 0x1249249249249249;
         n = (n ^ (n >> 2)) & 0x10c30c30c30c30c3;
@@ -121,7 +107,7 @@ public class Octree_LocationCode : MonoBehaviour
         int depthmodifier = (Convert.ToInt32(Math.Pow(8, depth)));
         long[] axismask = { 0x6DB6DB6DB6DB6DB6, 0x5B6DB6DB6DB6DB6D, 0x36DB6DB6DB6DB6DB };
         m = (m ^ depthmodifier);
-        long n = collapseby2(m >> axis);
+        long n = Collapseby2(m >> axis);
         if (WithinOctreeCheckInt(n + distance, depth))
         {
             // TODO: Optimization: Possible optimization in injecting (n + distance) value back into m
