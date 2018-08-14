@@ -140,8 +140,8 @@ public class Octree_Controller_v2: MonoBehaviour {
                 Debug.Log("Mesh.Triangles: " + IntArrayList(this.octree_mesh.triangles));
                 this.octree_mesh.SetTriangles(facetriangles, count);
 
-                Debug.Log("Type Number: " + node.type.code);
-                materiallist.Add(this.block_Manager.blockMaterialList[node.type.code]);
+                //Debug.Log("Type Number: " + node.type.code);
+                //materiallist.Add(this.block_Manager.blockMaterialList[node.type.code]);
 
                 this.octree_MeshRender.materials = materiallist.ToArray();
 

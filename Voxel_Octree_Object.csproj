@@ -311,7 +311,9 @@
     <Compile Include="Assets\Scripts\Octree_Controller.cs" />
     <Compile Include="Assets\Scripts\Octree_Controller_v1.cs" />
     <Compile Include="Assets\Scripts\Octree_Controller_v2.cs" />
+    <Compile Include="Assets\Scripts\Octree_Controller_v3.cs" />
     <Compile Include="Assets\Scripts\Octree_LocationCode.cs" />
+    <Compile Include="Assets\Scripts\Octree_LocationCode_v1.cs" />
     <Compile Include="Assets\Scripts\Octree_Node.cs" />
     <Compile Include="Assets\Scripts\Octree_Render.cs" />
     <Compile Include="Assets\Scripts\Octree_Voxel.cs" />

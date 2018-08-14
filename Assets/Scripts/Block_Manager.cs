@@ -2,24 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Block_Manager :MonoBehaviour
+public class Block_Manager
 {
 
     public Block[] blocklist =
     {
-        new AirBlock(),
-        new DirtBlock(),
-        new GrassBlock(),
-        new StoneBlock(),
+        new Block(0,0,true,"[0]AirBlock"), new Block(0,1,false,"[1]DirtBlock"),
+        new Block(0,2,false,"[2]GrassBlock"), new Block(0,3,false,"[3]StoneBlock")
     };
 
    public List<Material> blockMaterialList = new List<Material>();
-
-    public void Start()
-    {
-
-        
-    }
 
     public Block_Manager()
     {
