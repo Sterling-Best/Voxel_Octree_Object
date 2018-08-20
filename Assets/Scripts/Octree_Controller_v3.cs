@@ -22,7 +22,7 @@ public class Octree_Controller_v3 : MonoBehaviour
 
     public Block_Manager block_Manager;
 
-    public Octree_LocationCode olc;
+    public OT_LocCode olc;
 
     Renderer octree_MeshRender;
 
@@ -36,7 +36,7 @@ public class Octree_Controller_v3 : MonoBehaviour
     {
 
         this.block_Manager = new Block_Manager();
-        this.olc = new Octree_LocationCode();
+        this.olc = new OT_LocCode();
 
         this.octreepos = this.transform.position;
         this.octreelimitpos = octreepos + new Vector3(octreesize, octreesize, octreesize);
@@ -218,12 +218,12 @@ public class Octree_Controller_v3 : MonoBehaviour
     //TODO: UnitTest: DetermineSideRender()
     bool DetermineSideRender(long code, long adjacent)
     {
-        if (adjacent == code)
+        if (adjacent == code) // Adjacent is the same as code if they are at the edge of a chunk, should render.
         {
             return true;
-        } else if (octree.ContainsKey(Convert.ToInt32(adjacent)))
+        } else if (octree.ContainsKey(Convert.ToInt32(adjacent))) //Check to see if Adjacent is in Octree Dictionary
         {
-            if (block_Manager.blocklist[octree[Convert.ToInt32(adjacent)]].transparency == true)
+            if (block_Manager.blocklist[octree[Convert.ToInt32(adjacent)]].transparency == true) //Is adjacent transparent
             {
                 return true;
             }
@@ -231,7 +231,7 @@ public class Octree_Controller_v3 : MonoBehaviour
             {
                 return false;
             }
-        } else
+        } else 
         {
             Array parents = this.olc.CollectParents(adjacent);
             foreach (long parent in parents)
@@ -249,6 +249,11 @@ public class Octree_Controller_v3 : MonoBehaviour
             }
         }
         return false;
+    }
+
+    private bool ChildrenTransparencyCheck(long m)
+    {
+
     }
 
     Vector3[] CombineVector3Arrays(Vector3[] array1, Vector3[] array2)

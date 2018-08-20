@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Octree_LocationCode
+public class OT_LocCode
 {
     //--Encoding/Decoding--//
 
@@ -136,7 +136,17 @@ public class Octree_LocationCode
 
     //Child Search
 
-   //public Array 
+   public Array CollectChildrenAll(long m)
+    {
+        m = (m << 3);
+        long[] children = {m, (m | 1), (m | 2), (m | 3), (m | 4), (m | 5), (m | 6), (m | 7) };
+        return children;
+    }
+
+    //public Array CollectChildrenSide(long m, byte axis, bool positive)
+    //{
+
+    //}
 
     //TODO: Documentation: CalculateChildSpecific()
     //TODO: UnitTest: CalculateChildSpecific()
@@ -152,13 +162,6 @@ public class Octree_LocationCode
             return ((m << 3) | c);
         }
     }
-    
-
-    ////Child Search Side
-    //public Array CalculateChildrenSide(long m)
-    //{
-    //    return 
-    //}
 
     //--Property Methods--//
     //Methods that provide/reveal information from the code
