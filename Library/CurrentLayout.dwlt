@@ -13,14 +13,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PixelRect:
     serializedVersion: 2
-    x: 508.80002
-    y: 52.8
-    width: 952
-    height: 765
+    x: 0
+    y: 43
+    width: 1920
+    height: 997
   m_ShowMode: 4
   m_Title: 
   m_RootView: {fileID: 7}
-  m_MinSize: {x: 950, y: 300}
+  m_MinSize: {x: 950, y: 542}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &2
 MonoBehaviour:
@@ -36,12 +36,12 @@ MonoBehaviour:
   m_Children: []
   m_Position:
     serializedVersion: 2
-    x: 406
+    x: 818
     y: 0
-    width: 205
-    height: 331
-  m_MinSize: {x: 204, y: 221}
-  m_MaxSize: {x: 4004, y: 4021}
+    width: 415
+    height: 438
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 19}
   m_Panes:
   - {fileID: 19}
@@ -65,12 +65,12 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 30
-    width: 952
-    height: 715
-  m_MinSize: {x: 712, y: 492}
-  m_MaxSize: {x: 16012, y: 14042}
+    width: 1920
+    height: 947
+  m_MinSize: {x: 881, y: 492}
+  m_MaxSize: {x: 16006, y: 14042}
   vertical: 0
-  controlID: 106
+  controlID: 144
 --- !u!114 &4
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -85,18 +85,18 @@ MonoBehaviour:
   m_Children: []
   m_Position:
     serializedVersion: 2
-    x: 611
+    x: 1233
     y: 0
-    width: 341
-    height: 715
-  m_MinSize: {x: 102, y: 121}
+    width: 687
+    height: 947
+  m_MinSize: {x: 277, y: 71}
   m_MaxSize: {x: 4002, y: 4021}
-  m_ActualView: {fileID: 13}
+  m_ActualView: {fileID: 16}
   m_Panes:
   - {fileID: 16}
   - {fileID: 13}
-  m_Selected: 1
-  m_LastSelected: 0
+  m_Selected: 0
+  m_LastSelected: 1
 --- !u!114 &5
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -113,10 +113,10 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 202
-    height: 331
-  m_MinSize: {x: 202, y: 221}
-  m_MaxSize: {x: 4002, y: 4021}
+    width: 406
+    height: 438
+  m_MinSize: {x: 200, y: 200}
+  m_MaxSize: {x: 4000, y: 4000}
   m_ActualView: {fileID: 17}
   m_Panes:
   - {fileID: 17}
@@ -137,9 +137,9 @@ MonoBehaviour:
   m_Position:
     serializedVersion: 2
     x: 0
-    y: 331
-    width: 611
-    height: 384
+    y: 438
+    width: 1233
+    height: 509
   m_MinSize: {x: 232, y: 271}
   m_MaxSize: {x: 10002, y: 10021}
   m_ActualView: {fileID: 15}
@@ -167,9 +167,9 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 952
-    height: 765
-  m_MinSize: {x: 950, y: 300}
+    width: 1920
+    height: 997
+  m_MinSize: {x: 950, y: 542}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &8
 MonoBehaviour:
@@ -187,7 +187,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 952
+    width: 1920
     height: 30
   m_MinSize: {x: 0, y: 0}
   m_MaxSize: {x: 0, y: 0}
@@ -207,8 +207,8 @@ MonoBehaviour:
   m_Position:
     serializedVersion: 2
     x: 0
-    y: 745
-    width: 952
+    y: 977
+    width: 1920
     height: 20
   m_MinSize: {x: 0, y: 0}
   m_MaxSize: {x: 0, y: 0}
@@ -230,12 +230,12 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 611
-    height: 715
-  m_MinSize: {x: 610, y: 492}
-  m_MaxSize: {x: 12010, y: 14042}
+    width: 1233
+    height: 947
+  m_MinSize: {x: 604, y: 492}
+  m_MaxSize: {x: 12004, y: 14042}
   vertical: 1
-  controlID: 10
+  controlID: 49
 --- !u!114 &11
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -255,12 +255,12 @@ MonoBehaviour:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 611
-    height: 331
-  m_MinSize: {x: 610, y: 221}
-  m_MaxSize: {x: 12010, y: 4021}
+    width: 1233
+    height: 438
+  m_MinSize: {x: 604, y: 221}
+  m_MaxSize: {x: 12004, y: 4021}
   vertical: 0
-  controlID: 11
+  controlID: 50
 --- !u!114 &12
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -275,10 +275,10 @@ MonoBehaviour:
   m_Children: []
   m_Position:
     serializedVersion: 2
-    x: 202
+    x: 406
     y: 0
-    width: 204
-    height: 331
+    width: 412
+    height: 438
   m_MinSize: {x: 204, y: 221}
   m_MaxSize: {x: 4004, y: 4021}
   m_ActualView: {fileID: 18}
@@ -306,10 +306,10 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 1122.4
-    y: 102.4
-    width: 339
-    height: 694
+    x: 1235
+    y: 92
+    width: 685
+    height: 926
   m_PersistentViewDataDictionary: {fileID: 0}
   m_TestTypeToolbarIndex: 1
   m_PlayModeTestListGUI:
@@ -378,11 +378,11 @@ MonoBehaviour:
       isSuite: 1
       categories: []
       parentID: 
-    - id: '[C:/Users/methl/Documents/Serfs/Voxel_Octree_Object/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll][suite]'
+    - id: '[D:/Users/Methlodis/Voxel_Octree_Object/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll][suite]'
       name: Assembly-CSharp-Editor.dll
-      fullName: C:/Users/methl/Documents/Serfs/Voxel_Octree_Object/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll
-      resultStatus: 1
-      duration: 0.1594804
+      fullName: D:/Users/Methlodis/Voxel_Octree_Object/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll
+      resultStatus: 0
+      duration: 0
       messages: 
       output: 
       stacktrace: 
@@ -395,8 +395,8 @@ MonoBehaviour:
     - id: '[Assembly-CSharp-Editor][Octree_LocationCode_Tests][suite]'
       name: Octree_LocationCode_Tests
       fullName: Octree_LocationCode_Tests
-      resultStatus: 1
-      duration: 0.1362439
+      resultStatus: 0
+      duration: 0
       messages: 
       output: 
       stacktrace: 
@@ -405,12 +405,12 @@ MonoBehaviour:
       description: 
       isSuite: 1
       categories: []
-      parentID: '[C:/Users/methl/Documents/Serfs/Voxel_Octree_Object/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll][suite]'
+      parentID: '[D:/Users/Methlodis/Voxel_Octree_Object/Library/ScriptAssemblies/Assembly-CSharp-Editor.dll][suite]'
     - id: '[Assembly-CSharp-Editor][Octree_LocationCode_Tests.CalculateAdjacent_Test1_Offset1Manual]'
       name: CalculateAdjacent_Test1_Offset1Manual
       fullName: Octree_LocationCode_Tests.CalculateAdjacent_Test1_Offset1Manual
-      resultStatus: 1
-      duration: 0.0002492
+      resultStatus: 0
+      duration: 0
       messages: 
       output: 
       stacktrace: 
@@ -424,8 +424,8 @@ MonoBehaviour:
     - id: '[Assembly-CSharp-Editor][Octree_LocationCode_Tests.CalculateAdjacent_Test2_Offset1Random]'
       name: CalculateAdjacent_Test2_Offset1Random
       fullName: Octree_LocationCode_Tests.CalculateAdjacent_Test2_Offset1Random
-      resultStatus: 1
-      duration: 0.0619585
+      resultStatus: 0
+      duration: 0
       messages: 
       output: 
       stacktrace: 
@@ -439,8 +439,8 @@ MonoBehaviour:
     - id: '[Assembly-CSharp-Editor][Octree_LocationCode_Tests.CalculateChildCheck_Test1_Manual]'
       name: CalculateChildCheck_Test1_Manual
       fullName: Octree_LocationCode_Tests.CalculateChildCheck_Test1_Manual
-      resultStatus: 1
-      duration: 0.0002283
+      resultStatus: 0
+      duration: 0
       messages: 
       output: 
       stacktrace: 
@@ -454,8 +454,8 @@ MonoBehaviour:
     - id: '[Assembly-CSharp-Editor][Octree_LocationCode_Tests.CalculateChildSpecific_Test1_Manual]'
       name: CalculateChildSpecific_Test1_Manual
       fullName: Octree_LocationCode_Tests.CalculateChildSpecific_Test1_Manual
-      resultStatus: 1
-      duration: 0.0001611
+      resultStatus: 0
+      duration: 0
       messages: 
       output: 
       stacktrace: 
@@ -469,8 +469,8 @@ MonoBehaviour:
     - id: '[Assembly-CSharp-Editor][Octree_LocationCode_Tests.CalculateChildSpecific_Test2_ExceptionOutofBounds]'
       name: CalculateChildSpecific_Test2_ExceptionOutofBounds
       fullName: Octree_LocationCode_Tests.CalculateChildSpecific_Test2_ExceptionOutofBounds
-      resultStatus: 1
-      duration: 0.0001738
+      resultStatus: 0
+      duration: 0
       messages: 
       output: 
       stacktrace: 
@@ -484,8 +484,8 @@ MonoBehaviour:
     - id: '[Assembly-CSharp-Editor][Octree_LocationCode_Tests.CalculateDepth_Test1_Manual]'
       name: CalculateDepth_Test1_Manual
       fullName: Octree_LocationCode_Tests.CalculateDepth_Test1_Manual
-      resultStatus: 1
-      duration: 0.000166
+      resultStatus: 0
+      duration: 0
       messages: 
       output: 
       stacktrace: 
@@ -499,8 +499,8 @@ MonoBehaviour:
     - id: '[Assembly-CSharp-Editor][Octree_LocationCode_Tests.CalculateParent_Test1_Manual]'
       name: CalculateParent_Test1_Manual
       fullName: Octree_LocationCode_Tests.CalculateParent_Test1_Manual
-      resultStatus: 1
-      duration: 0.0001628
+      resultStatus: 0
+      duration: 0
       messages: 
       output: 
       stacktrace: 
@@ -514,8 +514,8 @@ MonoBehaviour:
     - id: '[Assembly-CSharp-Editor][Octree_LocationCode_Tests.CollectParents_Test1_Manual]'
       name: CollectParents_Test1_Manual
       fullName: Octree_LocationCode_Tests.CollectParents_Test1_Manual
-      resultStatus: 1
-      duration: 0.0001599
+      resultStatus: 0
+      duration: 0
       messages: 
       output: 
       stacktrace: 
@@ -529,8 +529,8 @@ MonoBehaviour:
     - id: '[Assembly-CSharp-Editor][Octree_LocationCode_Tests.CollectParents_Test2_Manual]'
       name: CollectParents_Test2_Manual
       fullName: Octree_LocationCode_Tests.CollectParents_Test2_Manual
-      resultStatus: 1
-      duration: 0.0001366
+      resultStatus: 0
+      duration: 0
       messages: 
       output: 
       stacktrace: 
@@ -544,8 +544,8 @@ MonoBehaviour:
     - id: '[Assembly-CSharp-Editor][Octree_LocationCode_Tests.CollectParents_Test3_Manual]'
       name: CollectParents_Test3_Manual
       fullName: Octree_LocationCode_Tests.CollectParents_Test3_Manual
-      resultStatus: 1
-      duration: 0.0000882
+      resultStatus: 0
+      duration: 0
       messages: 
       output: 
       stacktrace: 
@@ -559,8 +559,8 @@ MonoBehaviour:
     - id: '[Assembly-CSharp-Editor][Octree_LocationCode_Tests.CollectParents_Test4_Manual]'
       name: CollectParents_Test4_Manual
       fullName: Octree_LocationCode_Tests.CollectParents_Test4_Manual
-      resultStatus: 1
-      duration: 0.000086
+      resultStatus: 0
+      duration: 0
       messages: 
       output: 
       stacktrace: 
@@ -574,8 +574,8 @@ MonoBehaviour:
     - id: '[Assembly-CSharp-Editor][Octree_LocationCode_Tests.LocToVec3_Test2_VectorsRandom]'
       name: LocToVec3_Test2_VectorsRandom
       fullName: Octree_LocationCode_Tests.LocToVec3_Test2_VectorsRandom
-      resultStatus: 1
-      duration: 0.0342725
+      resultStatus: 0
+      duration: 0
       messages: 
       output: 
       stacktrace: 
@@ -589,8 +589,8 @@ MonoBehaviour:
     - id: '[Assembly-CSharp-Editor][Octree_LocationCode_Tests.Vec3ToLoc_Test1_DepthManual]'
       name: Vec3ToLoc_Test1_DepthManual
       fullName: Octree_LocationCode_Tests.Vec3ToLoc_Test1_DepthManual
-      resultStatus: 1
-      duration: 0.0003964
+      resultStatus: 0
+      duration: 0
       messages: 
       output: 
       stacktrace: 
@@ -604,8 +604,8 @@ MonoBehaviour:
     - id: '[Assembly-CSharp-Editor][Octree_LocationCode_Tests.Vec3ToLoc_Test2_DepthRandom]'
       name: Vec3ToLoc_Test2_DepthRandom
       fullName: Octree_LocationCode_Tests.Vec3ToLoc_Test2_DepthRandom
-      resultStatus: 1
-      duration: 0.0002056
+      resultStatus: 0
+      duration: 0
       messages: 
       output: 
       stacktrace: 
@@ -619,8 +619,8 @@ MonoBehaviour:
     - id: '[Assembly-CSharp-Editor][Octree_LocationCode_Tests.Vec3ToLoc_Test3_CodeManual]'
       name: Vec3ToLoc_Test3_CodeManual
       fullName: Octree_LocationCode_Tests.Vec3ToLoc_Test3_CodeManual
-      resultStatus: 1
-      duration: 0.0001578
+      resultStatus: 0
+      duration: 0
       messages: 
       output: 
       stacktrace: 
@@ -634,8 +634,8 @@ MonoBehaviour:
     - id: '[Assembly-CSharp-Editor][Octree_LocationCode_Tests.Vec3ToLoc_Test5_CodeRangesRandom]'
       name: Vec3ToLoc_Test5_CodeRangesRandom
       fullName: Octree_LocationCode_Tests.Vec3ToLoc_Test5_CodeRangesRandom
-      resultStatus: 1
-      duration: 0.0154939
+      resultStatus: 0
+      duration: 0
       messages: 
       output: 
       stacktrace: 
@@ -723,10 +723,10 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 508.80002
-    y: 432.80002
-    width: 609
-    height: 363
+    x: 0
+    y: 530
+    width: 1231
+    height: 488
   m_PersistentViewDataDictionary: {fileID: 0}
   m_SearchFilter:
     m_NameFilter: 
@@ -740,20 +740,20 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Editor
+    - Assets/Scripts
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/Editor
+  - Assets/Scripts
   m_LastFoldersGridSize: 16
-  m_LastProjectPath: C:\Users\methl\Documents\Serfs\Voxel_Octree_Object
+  m_LastProjectPath: D:\Users\Methlodis\Voxel_Octree_Object
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: f80b0000
-    m_LastClickedID: 3064
-    m_ExpandedIDs: 00000000a0090000f60b000000ca9a3b
+    m_SelectedIDs: 620b0000
+    m_LastClickedID: 2914
+    m_ExpandedIDs: 00000000b0090000060c000000ca9a3b
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -781,7 +781,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 00000000a0090000f60b0000
+    m_ExpandedIDs: 00000000b0090000060c0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -856,10 +856,10 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 1122.4
-    y: 102.4
-    width: 339
-    height: 694
+    x: 1235
+    y: 92
+    width: 685
+    height: 926
   m_PersistentViewDataDictionary: {fileID: 0}
   m_ObjectsLockedBeforeSerialization: []
   m_InstanceIDsLockedBeforeSerialization: 
@@ -890,16 +890,16 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 508.80002
-    y: 102.4
-    width: 200
-    height: 310
+    x: 0
+    y: 92
+    width: 404
+    height: 417
   m_PersistentViewDataDictionary: {fileID: 0}
   m_TreeViewState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 4c080000
-    m_LastClickedID: 0
-    m_ExpandedIDs: e0dbffff00defffffcf5ffffe6fbffff00000000
+    m_SelectedIDs: 840c0000
+    m_LastClickedID: 3204
+    m_ExpandedIDs: d6fbffff00000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -917,7 +917,8 @@ MonoBehaviour:
       m_IsRenamingFilename: 0
       m_ClientGUIView: {fileID: 5}
     m_SearchString: 
-  m_ExpandedScenes: []
+  m_ExpandedScenes:
+  - SampleScene
   m_CurrenRootInstanceID: 0
   m_LockTracker:
     m_IsLocked: 0
@@ -942,10 +943,10 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 713.60004
-    y: 102.4
-    width: 200
-    height: 310
+    x: 408
+    y: 92
+    width: 408
+    height: 417
   m_PersistentViewDataDictionary: {fileID: 0}
   m_SceneLighting: 1
   lastFramingTime: 0
@@ -953,9 +954,9 @@ MonoBehaviour:
   m_isRotationLocked: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 84.16333, y: -65.39565, z: 82.971146}
+    m_Target: {x: 39.401077, y: -21.300348, z: 29.810087}
     speed: 2
-    m_Value: {x: 84.16333, y: -65.39565, z: 82.971146}
+    m_Value: {x: 39.401077, y: -21.300348, z: 29.810087}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -983,13 +984,13 @@ MonoBehaviour:
       speed: 2
       m_Value: 0
   m_Rotation:
-    m_Target: {x: 0.2550777, y: 0.37568855, z: -0.10836245, w: 0.8843366}
+    m_Target: {x: 0.23468645, y: 0.45136032, z: -0.12434217, w: 0.85190094}
     speed: 2
-    m_Value: {x: 0.25507772, y: 0.37568855, z: -0.10836246, w: 0.88433665}
+    m_Value: {x: 0.23468645, y: 0.45136032, z: -0.12434217, w: 0.85190094}
   m_Size:
-    m_Target: 80.84304
+    m_Target: 92.25534
     speed: 2
-    m_Value: 80.84304
+    m_Value: 92.25534
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -1021,10 +1022,10 @@ MonoBehaviour:
     m_Tooltip: 
   m_Pos:
     serializedVersion: 2
-    x: 917.60004
-    y: 102.4
-    width: 201
-    height: 310
+    x: 820
+    y: 92
+    width: 411
+    height: 417
   m_PersistentViewDataDictionary: {fileID: 0}
   m_MaximizeOnPlay: 0
   m_Gizmos: 0
@@ -1036,16 +1037,16 @@ MonoBehaviour:
     m_VRangeLocked: 0
     hZoomLockedByDefault: 0
     vZoomLockedByDefault: 0
-    m_HBaseRangeMin: -80.4
-    m_HBaseRangeMax: 80.4
-    m_VBaseRangeMin: -117.200005
-    m_VBaseRangeMax: 117.200005
+    m_HBaseRangeMin: -205.5
+    m_HBaseRangeMax: 205.5
+    m_VBaseRangeMin: -200
+    m_VBaseRangeMax: 200
     m_HAllowExceedBaseRangeMin: 1
     m_HAllowExceedBaseRangeMax: 1
     m_VAllowExceedBaseRangeMin: 1
     m_VAllowExceedBaseRangeMax: 1
     m_ScaleWithWindow: 0
-    m_HSlider: 0
+    m_HSlider: 1
     m_VSlider: 1
     m_IgnoreScrollWheelUntilClicked: 0
     m_EnableMouseInput: 1
@@ -1057,25 +1058,25 @@ MonoBehaviour:
       serializedVersion: 2
       x: 0
       y: 17
-      width: 201
-      height: 293
-    m_Scale: {x: 1, y: 1.25}
-    m_Translation: {x: 100.5, y: 146.5}
+      width: 411
+      height: 400
+    m_Scale: {x: 1.25, y: 1.25}
+    m_Translation: {x: 205.5, y: 200}
     m_MarginLeft: 0
     m_MarginRight: 0
     m_MarginTop: 0
     m_MarginBottom: 0
     m_LastShownAreaInsideMargins:
       serializedVersion: 2
-      x: -100.5
-      y: -117.2
-      width: 201
-      height: 234.4
+      x: -164.4
+      y: -160
+      width: 328.8
+      height: 320
     m_MinimalGUI: 1
   m_defaultScale: 1
   m_TargetTexture: {fileID: 0}
   m_CurrentColorSpace: 0
-  m_LastWindowPixelSize: {x: 251.25, y: 387.5}
+  m_LastWindowPixelSize: {x: 411, y: 417}
   m_ClearInEditMode: 1
   m_NoCameraWarning: 1
   m_LowResolutionForAspectRatios: 01000000000000000100

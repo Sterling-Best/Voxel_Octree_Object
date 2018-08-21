@@ -101,15 +101,20 @@ public class Octree_Controller_v3 : MonoBehaviour
         {
             //Debug.Log("Current Code: " + code);
             //Only Render if node is  (has no children, identified if a key exists with string (current node.locationCode + "000"))
-            if (octree.ContainsKey(code << 3) == false && code != 0)
+            if (octree.ContainsKey(code << 3) == false)
             {
-                //If it is a leaf, check to see if this block type is transparent (void, atmosphere, item blocks (blocks with models), etc...). If it is don't render. 
-                float tier_size = this.octreesize * (1 / (float)Math.Pow(2, olc.CalculateDepth(code)));
-                //Debug.Log("Tier Size: " + tier_size);
-                Vector3 locpos = olc.LocToVec3(code) * tier_size;
-                // Debug.Log("Current Position: " + locpos.ToString());
+                
+                bool[] sidestorender = { DetermineSideRender(code, olc.CalculateAdjacent(code, 0, -1)), DetermineSideRender(code, olc.CalculateAdjacent(code, 1, 1)), // -z, +y
+                     DetermineSideRender(code, olc.CalculateAdjacent(code, 2, 1)), DetermineSideRender(code, olc.CalculateAdjacent(code, 2, -1)), // +x, -x
+                     DetermineSideRender(code, olc.CalculateAdjacent(code, 0, 1)), DetermineSideRender(code, olc.CalculateAdjacent(code, 1, -1))}; // +z, -y
 
-                Vector3[] verts = {
+                if (sidestorender.Any(x => x)) //If at least one side can be rendered
+                {
+
+                    float tier_size = this.octreesize * (1 / (float)Math.Pow(2, olc.CalculateDepth(code)));
+                    Vector3 locpos = olc.LocToVec3(code) * tier_size;
+
+                    Vector3[] verts = {
                     octreepos + locpos + new Vector3 (0, 0, 0),
                     octreepos + locpos + new Vector3 (tier_size, 0, 0),
                     octreepos + locpos + new Vector3 (tier_size, tier_size, 0),
@@ -118,97 +123,89 @@ public class Octree_Controller_v3 : MonoBehaviour
                     octreepos + locpos + new Vector3 (tier_size, tier_size, tier_size),
                     octreepos + locpos + new Vector3 (tier_size, 0, tier_size),
                     octreepos + locpos + new Vector3 (0, 0, tier_size),
-                };
-
-                List<int> facetriangles = new List<int>();
-                long adjacentcode;
-
-                //face front: -z
-                adjacentcode = olc.CalculateAdjacent(code, 0, -1);
-                if (DetermineSideRender(code, adjacentcode))
-                {
-                    int[] sidetriangles = {
-                         (count * 8) + 0, (count * 8) + 2, (count * 8) + 1, //f-z t1
-                         (count * 8) + 0, (count * 8) + 3, (count * 8) + 2, //f-z t2
-                         };
-                    facetriangles.AddRange(sidetriangles);
-                }
-
-                //face top: +y
-                adjacentcode = olc.CalculateAdjacent(code, 1, 1);
-                if (DetermineSideRender(code, adjacentcode))
-                {
-                    int[] sidetriangles = {
-                    (count * 8) + 2, (count * 8) + 3, (count * 8) + 4, //t+y t1
-			        (count * 8) + 2, (count * 8) + 4, (count * 8) + 5, //t+y t2
                     };
-                    facetriangles.AddRange(sidetriangles);
-                }
 
-                //face right: +x
-                adjacentcode = olc.CalculateAdjacent(code, 2, 1);
-                if (DetermineSideRender(code, adjacentcode))
-                {
-                    int[] sidetriangles = {
-                         (count * 8) + 1, (count * 8) + 2, (count * 8) + 5, //r+x t1
-                (count * 8) + 1, (count * 8) + 5, (count * 8) + 6, //r+x t2
+                    List<int> facetriangles = new List<int>();
+
+                    //face front: -z
+                    if (sidestorender[0])
+                    {
+                        int[] sidetriangles = {
+                            (count * 8) + 0, (count * 8) + 2, (count * 8) + 1, //f-z t1
+                            (count * 8) + 0, (count * 8) + 3, (count * 8) + 2, //f-z t2
                          };
-                    facetriangles.AddRange(sidetriangles);
-                }
+                        facetriangles.AddRange(sidetriangles);
+                    }
 
-                //face left: -x
-                adjacentcode = olc.CalculateAdjacent(code, 2, -1);
-                if (DetermineSideRender(code, adjacentcode))
-                {
-                    int[] sidetriangles = {
-                         (count * 8) + 0, (count * 8) + 7, (count * 8) + 4, //l-x t1
-                (count * 8) + 0, (count * 8) + 4, (count * 8) + 3, //l-x t2
-                         };
-                    facetriangles.AddRange(sidetriangles);
-                }
-
-                //face back: z
-                adjacentcode = olc.CalculateAdjacent(code, 0, 1);
-                if (DetermineSideRender(code, adjacentcode))
-                {
-                    int[] sidetriangles = {
-                         (count * 8) + 5, (count * 8) + 4, (count * 8) + 7, //l-z t1
-                (count * 8) + 5, (count * 8) + 7, (count * 8) + 6, //l-z t2
-                         };
-                    facetriangles.AddRange(sidetriangles);
-                }
-
-                //face bottom: -y
-                adjacentcode = olc.CalculateAdjacent(code, 1, -1);
-                if (DetermineSideRender(code, adjacentcode))
-                {
-                    int[] sidetriangles = {
-
-                    (count * 8) + 0, (count * 8) + 6, (count * 8) + 7, //b-y t1
-                    (count * 8) + 0, (count * 8) + 1, (count * 8) + 6  //b-y t2
+                    //face top: +y
+                    if (sidestorender[1])
+                    {
+                        int[] sidetriangles = {
+                            (count * 8) + 2, (count * 8) + 3, (count * 8) + 4, //t+y t1
+			                (count * 8) + 2, (count * 8) + 4, (count * 8) + 5, //t+y t2
                     };
-                    facetriangles.AddRange(sidetriangles);
+                        facetriangles.AddRange(sidetriangles);
+                    }
+
+                    //face right: +x
+                    if (sidestorender[2])
+                    {
+                        int[] sidetriangles = {
+                            (count * 8) + 1, (count * 8) + 2, (count * 8) + 5, //r+x t1
+                            (count * 8) + 1, (count * 8) + 5, (count * 8) + 6, //r+x t2
+                         };
+                        facetriangles.AddRange(sidetriangles);
+                    }
+
+                    //face left: -x
+                    if (sidestorender[3])
+                    {
+                        int[] sidetriangles = {
+                            (count * 8) + 0, (count * 8) + 7, (count * 8) + 4, //l-x t1
+                            (count * 8) + 0, (count * 8) + 4, (count * 8) + 3, //l-x t2
+                         };
+                        facetriangles.AddRange(sidetriangles);
+                    }
+
+                    //face back: +z
+                    if (sidestorender[4])
+                    {
+                        int[] sidetriangles = {
+                            (count * 8) + 5, (count * 8) + 4, (count * 8) + 7, //l-z t1
+                            (count * 8) + 5, (count * 8) + 7, (count * 8) + 6, //l-z t2
+                         };
+                        facetriangles.AddRange(sidetriangles);
+                    }
+
+                    //face bottom: -y
+                    if (sidestorender[5])
+                    {
+                        int[] sidetriangles = {
+                            (count * 8) + 0, (count * 8) + 6, (count * 8) + 7, //b-y t1
+                            (count * 8) + 0, (count * 8) + 1, (count * 8) + 6  //b-y t2
+                    };
+                        facetriangles.AddRange(sidetriangles);
+                    }
+                    this.octree_mesh.vertices = CombineVector3Arrays(this.octree_mesh.vertices, verts);
+                    this.octree_mesh.SetTriangles(facetriangles, count);
+                    materiallist.Add(this.block_Manager.blockMaterialList[octree[code]]);
+                    count++;
+                    
                 }
 
-                this.octree_mesh.vertices = CombineVector3Arrays(this.octree_mesh.vertices, verts);
-                //Debug.Log("Mesh.Vertices: " + Vector3ArrayList(this.octree_mesh.vertices));
-                //this.octree_mesh.triangles = CombineIntArrays(this.octree_mesh.triangles, facetriangles.ToArray<int>());
-                //Debug.Log("Mesh.Triangles: " + IntArrayList(this.octree_mesh.triangles));
-                this.octree_mesh.SetTriangles(facetriangles, count);
-
-                //Debug.Log("Type Number: " + octree[code]);
-                materiallist.Add(this.block_Manager.blockMaterialList[octree[code]]);
-
-                this.octree_MeshRender.materials = materiallist.ToArray();
-
-                this.octree_mesh.RecalculateNormals();
-                this.octree_mesh.RecalculateBounds();
-                count++;
+                else
+                {
+                    continue;
+                }               
+                
             }
             else
             {
                 continue;
             }
+            this.octree_MeshRender.materials = materiallist.ToArray();
+            this.octree_mesh.RecalculateNormals();
+            this.octree_mesh.RecalculateBounds();
         }
     }
 
@@ -251,10 +248,10 @@ public class Octree_Controller_v3 : MonoBehaviour
         return false;
     }
 
-    private bool ChildrenTransparencyCheck(long m)
-    {
+    //private bool ChildrenTransparencyCheck(long m)
+    //{
 
-    }
+    //}
 
     Vector3[] CombineVector3Arrays(Vector3[] array1, Vector3[] array2)
     {
@@ -310,31 +307,5 @@ public class Octree_Controller_v3 : MonoBehaviour
         return vectstr;
     }
 
-    Vector3 LocationCodeToVector3(string locationcode)
-    {
-
-
-        Vector3 Vec3Sum = new Vector3(0, 0, 0);
-        for (int i = 1; i <= (locationcode.Length / 3); i++)
-        {
-            float depth = (float)(Math.Log(i, 8));
-            float tier_size = this.octreesize * (1 / (float)(Math.Pow(2, depth)));
-            float x = Convert.ToInt32(locationcode[((i - 1) * 3) + 0].ToString());
-            float y = Convert.ToInt32(locationcode[((i - 1) * 3) + 1].ToString());
-            float z = Convert.ToInt32(locationcode[((i - 1) * 3) + 2].ToString());
-            x = tier_size * x;
-            y = tier_size * y;
-            z = tier_size * z;
-
-            //Debug.Log(x.ToString() + ", " + y.ToString() + ", " + z.ToString());
-
-            Vec3Sum = Vec3Sum + new Vector3(x, y, z);
-        }
-
-        Debug.Log("Location Code to Vert - LocCode: " + locationcode + " LocPos: " + Vec3Sum.ToString());
-
-        return Vec3Sum;
-    }
-}
 
    
