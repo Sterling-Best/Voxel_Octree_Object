@@ -103,7 +103,7 @@ public class Octree_Controller_v3 : MonoBehaviour
             //Only Render if node is  (has no children, identified if a key exists with string (current node.locationCode + "000"))
             if (octree.ContainsKey(code << 3) == false)
             {
-                
+
                 bool[] sidestorender = { DetermineSideRender(code, olc.CalculateAdjacent(code, 0, -1)), DetermineSideRender(code, olc.CalculateAdjacent(code, 1, 1)), // -z, +y
                      DetermineSideRender(code, olc.CalculateAdjacent(code, 2, 1)), DetermineSideRender(code, olc.CalculateAdjacent(code, 2, -1)), // +x, -x
                      DetermineSideRender(code, olc.CalculateAdjacent(code, 0, 1)), DetermineSideRender(code, olc.CalculateAdjacent(code, 1, -1))}; // +z, -y
@@ -190,14 +190,14 @@ public class Octree_Controller_v3 : MonoBehaviour
                     this.octree_mesh.SetTriangles(facetriangles, count);
                     materiallist.Add(this.block_Manager.blockMaterialList[octree[code]]);
                     count++;
-                    
+
                 }
 
                 else
                 {
                     continue;
-                }               
-                
+                }
+
             }
             else
             {
@@ -218,9 +218,13 @@ public class Octree_Controller_v3 : MonoBehaviour
         if (adjacent == code) // Adjacent is the same as code if they are at the edge of a chunk, should render.
         {
             return true;
-        } else if (octree.ContainsKey(Convert.ToInt32(adjacent))) //Check to see if Adjacent is in Octree Dictionary
+        }
+        else if (octree.ContainsKey(Convert.ToInt32(adjacent))) //Check to see if Adjacent is in Octree Dictionary
         {
-            if (block_Manager.blocklist[octree[Convert.ToInt32(adjacent)]].transparency == true) //Is adjacent transparent
+            bool codetransparency = block_Manager.blocklist[octree[Convert.ToInt32(code)]].transparency;
+            bool adjacenttransparency = block_Manager.blocklist[octree[Convert.ToInt32(adjacent)]].transparency;
+
+            if (adjacenttransparency == true &&  codetransparency != adjacenttransparency) //Is adjacent transparent
             {
                 return true;
             }
@@ -228,17 +232,22 @@ public class Octree_Controller_v3 : MonoBehaviour
             {
                 return false;
             }
-        } else 
+        }
+        else
         {
             Array parents = this.olc.CollectParents(adjacent);
             foreach (long parent in parents)
             {
                 if (octree.ContainsKey(Convert.ToInt32(parent)))
                 {
-                    if (block_Manager.blocklist[octree[Convert.ToInt32(parent)]].transparency == true)
+                    bool codetransparency = block_Manager.blocklist[octree[Convert.ToInt32(code)]].transparency;
+                    bool adjacenttransparency = block_Manager.blocklist[octree[Convert.ToInt32(parent)]].transparency;
+
+                    if (adjacenttransparency == true && codetransparency != adjacenttransparency)
                     {
                         return true;
-                    } else
+                    }
+                    else
                     {
                         return false;
                     }
@@ -248,10 +257,11 @@ public class Octree_Controller_v3 : MonoBehaviour
         return false;
     }
 
-    //private bool ChildrenTransparencyCheck(long m)
-    //{
+    private bool ChildrenTransparencyCheck(long m)
+    {
 
-    //}
+        return true;
+    }
 
     Vector3[] CombineVector3Arrays(Vector3[] array1, Vector3[] array2)
     {
@@ -306,6 +316,6 @@ public class Octree_Controller_v3 : MonoBehaviour
         }
         return vectstr;
     }
-
+}
 
    
