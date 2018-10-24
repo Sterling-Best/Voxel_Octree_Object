@@ -11,8 +11,12 @@ using UnityEngine;
 public class Octree_Controller : MonoBehaviour
 {
 
+    
     public Dictionary<int, int> octree = new Dictionary<int
-        , int>();
+        , int>(); //<int, int> = <locID, blocktype>
+
+
+    public Dictionary<int, int> materialdic = new Dictionary<int, int>(); //<int, int> = <materialID, materialIndexinChunk>
 
     public float octreesize = 16.0f;
 
@@ -40,6 +44,13 @@ public class Octree_Controller : MonoBehaviour
 
         this.octreepos = this.transform.position;
         this.octreelimitpos = octreepos + new Vector3(octreesize, octreesize, octreesize);
+
+        this.materialdic.Add(0, 0);
+        this.materialdic.Add(1, 1);
+        this.materialdic.Add(2, 2);
+        this.materialdic.Add(3, 3);
+
+
 
 
         //Test 1
@@ -88,10 +99,14 @@ public class Octree_Controller : MonoBehaviour
         //Set up Mesh
         this.octree_mesh = GetComponent<MeshFilter>().mesh;
         this.octree_mesh.Clear();
-        this.octree_mesh.subMeshCount = this.octree.Count;
+        this.octree_mesh.subMeshCount = this.materialdic.Count;
         //Set Up Materials
         this.octree_MeshRender = GetComponent<MeshRenderer>();
         List<Material> materiallist = new List<Material>();
+        materiallist.Add(this.block_Manager.blockMaterialList[0]);
+        materiallist.Add(this.block_Manager.blockMaterialList[1]);
+        materiallist.Add(this.block_Manager.blockMaterialList[2]);
+        materiallist.Add(this.block_Manager.blockMaterialList[3]);
         //Record Chunk's Current Position
         Vector3 octreepos = this.transform.position;
         //Display Default Information for Chunk
@@ -187,8 +202,8 @@ public class Octree_Controller : MonoBehaviour
                         facetriangles.AddRange(sidetriangles);
                     }
                     this.octree_mesh.vertices = CombineVector3Arrays(this.octree_mesh.vertices, verts);
-                    this.octree_mesh.SetTriangles(facetriangles, count);
-                    materiallist.Add(this.block_Manager.blockMaterialList[octree[code]]);
+                    this.octree_mesh.SetTriangles(facetriangles, this.materialdic[octree[code]]);
+                    
                     count++;
 
                 }

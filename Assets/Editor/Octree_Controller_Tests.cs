@@ -6,10 +6,10 @@ using System;
 
 public class Octree_Controller_Tests : MonoBehaviour {
 
-    Class target = new Class();
-    var obj = new PrivateObject(target);
-    var retVal = obj.Invoke("PrivateMethod");
-    Assert.AreEqual(retVal);
+    //Class target = new Class();
+    //var obj = new PrivateObject(target);
+    //var retVal = obj.Invoke("PrivateMethod");
+    //Assert.AreEqual(retVal);
 
     [Test]
     public void ChildrenSideTransparencyCheck()
@@ -39,7 +39,7 @@ public class Octree_Controller_Tests : MonoBehaviour {
         oc.octree.Add(14, 0);
         oc.octree.Add(15, 0);
 
-        Assert.AreEqual (oc.Chi)
+        //Assert.AreEqual (oc.Chi)
 
 
 
