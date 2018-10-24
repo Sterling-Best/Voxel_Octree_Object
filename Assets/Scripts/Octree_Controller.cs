@@ -18,7 +18,7 @@ public class Octree_Controller : MonoBehaviour
 
     public Dictionary<int, int> materialdic = new Dictionary<int, int>(); //<int, int> = <materialID, materialIndexinChunk>
 
-    public float octreesize = 16.0f;
+    public float octreesize;
 
     Vector3 octreepos;
 
@@ -34,51 +34,70 @@ public class Octree_Controller : MonoBehaviour
 
     Material[] materialsreference;
 
-
     // Use this for initialization
     void Start()
     {
+        this.octreepos = this.transform.position;
+        this.octreesize = 16;
+        this.octreelimitpos = octreepos + new Vector3(octreesize, octreesize, octreesize);
 
         this.block_Manager = new Block_Manager();
         this.olc = new OT_LocCode();
-
-        this.octreepos = this.transform.position;
-        this.octreelimitpos = octreepos + new Vector3(octreesize, octreesize, octreesize);
-
-        this.materialdic.Add(0, 0);
-        this.materialdic.Add(1, 1);
-        this.materialdic.Add(2, 2);
-        this.materialdic.Add(3, 3);
 
 
 
 
         //Test 1
         //this.octree.Add(0, 0);
-        this.octree.Add(8, 0);
-        this.octree.Add(9, 0);
-        this.octree.Add(10, 0);
-        this.octree.Add(11, 0);
-        this.octree.Add(12, 0);
-        this.octree.Add(13, 0);
-        this.octree.Add(14, 0);
-        this.octree.Add(15, 0);
-        this.octree.Add(64, 3);
-        this.octree.Add(65, 3);
-        this.octree.Add(66, 1);
-        this.octree.Add(67, 2);
-        this.octree.Add(536, 1);
-        this.octree.Add(537, 1);
-        this.octree.Add(538, 2);
-        this.octree.Add(539, 2);
-        this.octree.Add(540, 1);
-        this.octree.Add(541, 1);
-        this.octree.Add(542, 2);
-        this.octree.Add(543, 2);
-        this.octree.Add(68, 3);
-        this.octree.Add(69, 3);
-        this.octree.Add(70, 1);
-        this.octree.Add(71, 1);
+        //this.octree.Add(8, 0);
+        //this.octree.Add(9, 0);
+        //this.octree.Add(10, 0);
+        //this.octree.Add(11, 0);
+        //this.octree.Add(12, 0);
+        //this.octree.Add(13, 0);
+        //this.octree.Add(14, 0);
+        //this.octree.Add(15, 0);
+        //this.octree.Add(64, 3);
+        //this.octree.Add(65, 3);
+        //this.octree.Add(66, 1);
+        //this.octree.Add(67, 2);
+        //this.octree.Add(536, 1);
+        //this.octree.Add(537, 1);
+        //this.octree.Add(538, 2);
+        //this.octree.Add(539, 2);
+        //this.octree.Add(540, 1);
+        //this.octree.Add(541, 1);
+        //this.octree.Add(542, 2);
+        ////this.octree.Add(543, 0);
+        //this.octree.Add(68, 3);
+        //this.octree.Add(69, 3);
+        //this.octree.Add(70, 1);
+        //this.octree.Add(71, 1);
+
+        AddBlockLocID(8, 0);
+        AddBlockLocID(9, 0);
+        AddBlockLocID(10, 0);
+        AddBlockLocID(11, 0);
+        AddBlockLocID(12, 0);
+        AddBlockLocID(13, 0);
+        AddBlockLocID(14, 0);
+        AddBlockLocID(15, 0);
+        AddBlockLocID(64, 3);
+        AddBlockLocID(65, 3);
+        AddBlockLocID(66, 1);
+        AddBlockLocID(67, 2);
+        AddBlockLocID(536, 1);
+        AddBlockLocID(537, 1);
+        AddBlockLocID(538, 2);
+        AddBlockLocID(539, 2);
+        AddBlockLocID(540, 1);
+        AddBlockLocID(541, 1);
+        AddBlockLocID(542, 2);
+       // AddBlockLocID(543, 1);
+        AddBlockLocID(68, 3);
+        AddBlockLocID(69, 3);
+        AddBlockLocID(70, 1);
+        AddBlockLocID(71, 1);
 
         //Test 2
 
@@ -91,7 +110,23 @@ public class Octree_Controller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+    
+    }
 
+    public void AddBlock(Vector3 position, int type) {
+
+    }
+
+    public void AddBlockLocID(int locID, int type)
+    {
+        if (this.materialdic.Count == 0)
+            this.materialdic.Add(type, 0);
+        else
+        {
+            if (!materialdic.ContainsKey(type))
+                this.materialdic.Add(type, this.materialdic.Count);
+        }
+        this.octree.Add(locID, type);
     }
 
     private void PreRender()
@@ -102,13 +137,12 @@ public class Octree_Controller : MonoBehaviour
         this.octree_mesh.subMeshCount = this.materialdic.Count;
         //Set Up Materials
         this.octree_MeshRender = GetComponent<MeshRenderer>();
+        // TODO: Need to make this Dynamic
         List<Material> materiallist = new List<Material>();
         materiallist.Add(this.block_Manager.blockMaterialList[0]);
         materiallist.Add(this.block_Manager.blockMaterialList[1]);
         materiallist.Add(this.block_Manager.blockMaterialList[2]);
         materiallist.Add(this.block_Manager.blockMaterialList[3]);
-        //Record Chunk's Current Position
-        Vector3 octreepos = this.transform.position;
         //Display Default Information for Chunk
         int count = 0;
         //Check each node in the octree if it should be rendered. 
@@ -202,8 +236,7 @@ public class Octree_Controller : MonoBehaviour
                         facetriangles.AddRange(sidetriangles);
                     }
                     this.octree_mesh.vertices = CombineVector3Arrays(this.octree_mesh.vertices, verts);
-                    this.octree_mesh.SetTriangles(facetriangles, this.materialdic[octree[code]]);
-                    
+                    this.octree_mesh.SetTriangles(CombineIntArrays(this.octree_mesh.GetTriangles(this.materialdic[octree[code]]), facetriangles.ToArray()), this.materialdic[octree[code]]);
                     count++;
 
                 }
@@ -285,6 +318,8 @@ public class Octree_Controller : MonoBehaviour
         System.Array.Copy(array2, 0, array3, array1.Count(), array2.Count());
         return array3;
     }
+
+
 
     Vector2[] CombineVector2Arrays(Vector2[] array1, Vector2[] array2)
     {
