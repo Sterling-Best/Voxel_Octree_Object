@@ -44,6 +44,7 @@ public class Octree_Controller : MonoBehaviour
         this.block_Manager = new Block_Manager();
         this.olc = new OT_LocCode();
 
+        //AddNodeLocID(LocID, Type);
         //AddNodeLocID(8, 0);
         //AddNodeLocID(9, 0);
         //AddNodeLocID(10, 0);
@@ -69,6 +70,7 @@ public class Octree_Controller : MonoBehaviour
         //AddNodeLocID(70, 1);
         //AddNodeLocID(71, 1);
 
+        //AddNodeRelPos(Vector3, Depth, Type);
         AddNodeRelPos(new Vector3(0, 0, 0), 1, 2);
         AddNodeRelPos(new Vector3(1, 7.3f, 9), 1, 0);
         AddNodeRelPos(new Vector3(0, 8, 0), 1, 0);
@@ -81,7 +83,6 @@ public class Octree_Controller : MonoBehaviour
         AddNodeRelPos(new Vector3(0, 2.4f, 5.3f), 2, 3);
         AddNodeRelPos(new Vector3(3.6f, 6, 1.2f), 2, 1);
         AddNodeRelPos(new Vector3(1, 7.7f, 4), 2, 2);
-        //AddNodeRelPos(67, 2);
         //AddNodeRelPos(536, 1);
         //AddNodeRelPos(537, 1);
         //AddNodeRelPos(538, 2);
@@ -90,10 +91,10 @@ public class Octree_Controller : MonoBehaviour
         //AddNodeRelPos(541, 1);
         //AddNodeRelPos(542, 2);
         //AddNodeRelPos(543, 1);
-        //AddNodeRelPos(68, 3);
-        //AddNodeRelPos(69, 3);
-        //AddNodeRelPos(70, 1);
-        //AddNodeRelPos(71, 1);
+        AddNodeRelPos(new Vector3(4, 2, 1), 2, 3);
+        AddNodeRelPos(new Vector3(4, 3, 4), 2, 3);
+        AddNodeRelPos(new Vector3(6.1f, 4.11f, 1.69f), 2, 1);
+        AddNodeRelPos(new Vector3(4, 4, 4), 2, 1);
 
         //Test 2
 
@@ -112,11 +113,12 @@ public class Octree_Controller : MonoBehaviour
     public void AddNodeAbsPos(Vector3 position, byte depth, int type)
     {
 
+
     }
 
     public void AddNodeRelPos(Vector3 position, byte depth, int type) {
-        int boop = (int)this.octreesize / (2 * depth);
-        position = new Vector3((int)Math.Floor(position.x) / boop, (int)Math.Floor(position.y) / boop, (int)Math.Floor(position.z) / boop);
+        int depthcoord = (int)this.octreesize / (2 * depth);
+        position = new Vector3((int)Math.Floor(position.x) / depthcoord, (int)Math.Floor(position.y) / depthcoord, (int)Math.Floor(position.z) / depthcoord);
         AddNodeLocID(olc.Vec3ToLoc(position, depth), type);
     }
 
