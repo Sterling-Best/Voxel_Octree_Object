@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Character_Controller : MonoBehaviour {
 
+    public GameObject Camera;
+
     public float Speed = 5f;
     public float JumpHeight = 2f;
     public float GroundDistance = 5f;
@@ -26,11 +28,15 @@ public class Character_Controller : MonoBehaviour {
         //_isGrounded = Physics.CheckSphere(_groundChecker.position, GroundDistance, Ground, QueryTriggerInteraction.Ignore);
 
         _inputs = Vector3.zero;
-        _inputs.x = Input.GetAxis("Horizontal");
+        _inputs.x = -Input.GetAxis("Horizontal");
         _inputs.z = Input.GetAxis("Vertical");
         if (_inputs != Vector3.zero)
         {
-            transform.forward = _inputs;
+            Quaternion rotate = Camera.transform.rotation * Quaternion.Euler(0, -90, 0);
+            rotate.x = 0;
+            rotate.z = 0;
+
+            transform.rotation = rotate;
 
         }
         if (Input.GetButtonDown("Jump") && _isGrounded)
@@ -47,6 +53,7 @@ public class Character_Controller : MonoBehaviour {
     // Physics Forced Update
     private void FixedUpdate()
     {
-        _body.MovePosition(_body.position + _inputs * Speed * Time.fixedDeltaTime);
+        
+        _body.MovePosition(_body.position +  ((transform.forward * _inputs.x) + (transform.right * _inputs.z))  * Speed * Time.fixedDeltaTime);
     }
 }

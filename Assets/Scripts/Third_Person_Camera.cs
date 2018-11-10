@@ -25,6 +25,9 @@ public class Third_Person_Camera : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        transform.LookAt(CameraFollowObj.transform);
+
+
         Vector3 rot = transform.localRotation.eulerAngles;
         rotY = rot.y;
         rotX = rot.x;
@@ -47,7 +50,7 @@ public class Third_Person_Camera : MonoBehaviour {
 
         rotX = Mathf.Clamp(rotX, -clampangle, clampangle);
 
-        Quaternion localRotation = Quaternion.Euler(0.0f, rotY, rotX);
+        Quaternion localRotation = Quaternion.Euler(rotX, rotY, 0.0f);
         transform.rotation = localRotation;
     }
 
