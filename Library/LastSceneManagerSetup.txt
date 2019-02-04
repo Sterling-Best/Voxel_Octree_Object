@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/Character Testing.unity
+- path: Assets/Scenes/Chunk Testing.unity
   isLoaded: 1
   isActive: 1
