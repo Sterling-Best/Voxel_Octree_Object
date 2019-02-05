@@ -25,20 +25,21 @@ public class Chunk_Manager : MonoBehaviour
     //Block Manager for Block Details - Mainly to hand off as reference to chunk
     private Block_Manager blockManager;
 
+
     private void Awake()
     {
         blockMinSize = (int)(chunkSize / (Mathf.Pow(2, chunkMaxDepth)));
 
         //TODO: Remove Tests
         //Testing Chunks
-        AddChunk(new Vector3(0, 0, 0));
-        AddChunk(new Vector3(0, 16, 0));
+        
     }
 
     // Start is called before the first frame update
     void Start()
     {
-
+        AddChunk(new Vector3(0, 0, 0));
+        AddChunk(new Vector3(0, 16, 0));
     }
 
     // Update is called once per frame
@@ -68,7 +69,7 @@ public class Chunk_Manager : MonoBehaviour
         chunk.AddComponent(typeof(MeshFilter));
         chunk.AddComponent(typeof(MeshRenderer));
         chunk.AddComponent<Octree_Controller>();
-        chunk.GetComponent<Octree_Controller>().octreesize = chunkSize;
+        chunk.GetComponent<Octree_Controller>().octreeSize = chunkSize;
         chunk.name = "Chunk" + Octree_Controller.count.ToString();
         chunk.transform.position = a_pos;
         return chunk;
