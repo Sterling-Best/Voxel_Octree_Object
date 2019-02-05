@@ -76,6 +76,7 @@
     <Compile Include="Assets\Scripts\Octree_Render.cs" />
     <Compile Include="Assets\Scripts\Octree_Voxel.cs" />
     <Compile Include="Assets\Scripts\Third_Person_Camera.cs" />
+    <Compile Include="Assets\Scripts\World.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/methl/Documents/Serfs/Voxel_Octree_Object/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>

@@ -5,6 +5,9 @@ using System.Linq;
 using UnityEngine;
 
 
+// TODO: Renderer - switch to const for sides
+// TODO: Render -  see how uvs map to 
+
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
 [RequireComponent(typeof(Renderer))]
@@ -33,6 +36,13 @@ public class Octree_Controller : MonoBehaviour
     Mesh octree_mesh;
 
     Material[] materialsreference;
+
+    public static int count = 0;
+
+    private void Awake()
+    {
+        count += 1;
+    }
 
     // Use this for initialization
     void Start()
@@ -309,7 +319,6 @@ public class Octree_Controller : MonoBehaviour
 
     private bool ChildrenSideTransparencyCheck(long m, byte axis, bool positive)
     {
-
         return true;
     }
 
