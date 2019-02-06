@@ -5,14 +5,16 @@ using UnityEngine;
 public struct Block { 
     public ushort collection;
     public ushort itemcode;
-    public bool transparency; 
+    public bool opaque;
+    public bool translucent; 
     public string materialfile;
 
-    public Block (ushort col, ushort cod, bool trans, string mfile)
+    public Block (ushort col, ushort cod, bool opaq, bool trans, string mfile)
     {
         this.collection = col;
         this.itemcode = cod;
-        this.transparency = trans;
+        this.opaque = opaq;
+        this.translucent = trans;
         this.materialfile = mfile;
     }
 

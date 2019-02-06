@@ -44,73 +44,17 @@ public class Octree_Controller : MonoBehaviour
     private void Awake()
     {
         count += 1;
-    }
-
-    // Use this for initialization
-    void Start()
-    {
-        this.octreepos = this.transform.position;
-        this.octreelimitpos = octreepos + new Vector3(octreeSize, octreeSize, octreeSize);
-
         this.block_Manager = new Block_Manager();
         this.olc = new OT_LocCode();
+        this.octreepos = this.gameObject.transform.position;
+        this.octreelimitpos = octreepos + new Vector3(octreeSize, octreeSize, octreeSize);
+    }
 
-        //AddNodeLocID(LocID, Type);
-        //AddNodeLocID(8, 0);
-        //AddNodeLocID(9, 0);
-        //AddNodeLocID(10, 0);
-        //AddNodeLocID(11, 0);
-        //AddNodeLocID(12, 0);
-        //AddNodeLocID(13, 0);
-        //AddNodeLocID(14, 0);
-        //AddNodeLocID(15, 0);
-        //AddNodeLocID(64, 3);
-        //AddNodeLocID(65, 3);
-        //AddNodeLocID(66, 1);
-        //AddNodeLocID(67, 2);
-        //AddNodeLocID(536, 1);
-        //AddNodeLocID(537, 1);
-        //AddNodeLocID(538, 2);
-        //AddNodeLocID(539, 2);
-        //AddNodeLocID(540, 1);
-        //AddNodeLocID(541, 1);
-        //AddNodeLocID(542, 2);
-        //AddNodeLocID(543, 1);
-        //AddNodeLocID(68, 3);
-        //AddNodeLocID(69, 3);
-        //AddNodeLocID(70, 1);
-        //AddNodeLocID(71, 1);
-
-        //AddNodeRelPos(Vector3, Depth, Type);
-        AddNodeRelPos(new Vector3(0, 0, 0), 1, 2);
-        AddNodeRelPos(new Vector3(1, 7.3f, 9), 1, 0);
-        AddNodeRelPos(new Vector3(0, 8, 0), 1, 0);
-        AddNodeRelPos(new Vector3(0, 8, 8), 1, 0);
-        AddNodeRelPos(new Vector3(8, 0, 0), 1, 0);
-        AddNodeRelPos(new Vector3(8, 0, 8), 1, 0);
-        AddNodeRelPos(new Vector3(8, 8, 0), 1, 0);
-        AddNodeRelPos(new Vector3(8, 8, 8), 1, 0);
-        AddNodeRelPos(new Vector3(1, 1, 1), 2, 3);
-        AddNodeRelPos(new Vector3(0, 2.4f, 5.3f), 2, 3);
-        AddNodeRelPos(new Vector3(3.6f, 6, 1.2f), 2, 1);
-        AddNodeRelPos(new Vector3(1, 7.7f, 4), 2, 2);
-        //AddNodeRelPos(536, 1);
-        //AddNodeRelPos(537, 1);
-        //AddNodeRelPos(538, 2);
-        //AddNodeRelPos(539, 2);
-        //AddNodeRelPos(540, 1);
-        //AddNodeRelPos(541, 1);
-        //AddNodeRelPos(542, 2);
-        //AddNodeRelPos(543, 1);
-        AddNodeRelPos(new Vector3(4, 2, 1), 2, 3);
-        AddNodeRelPos(new Vector3(4, 3, 4), 2, 3);
-        AddNodeRelPos(new Vector3(6.1f, 4.11f, 1.69f), 2, 1);
-        AddNodeRelPos(new Vector3(4, 4, 4), 2, 1);
-
-        //Test 2
-
+        // Use this for initialization
+        void Start()
+    {
+        MergeNodes();
         chunk_Renderer.DrawChunk(gameObject);
-
     }
 
 
@@ -121,27 +65,74 @@ public class Octree_Controller : MonoBehaviour
     
     }
 
-    public void AddNodeAbsPos(Vector3 position, byte depth, int type)
+    public void AddNodeAbsPos(Vector3 a_position, byte depth, int type)
     {
-
-
+        Vector3 position = new Vector3(a_position.x - this.transform.position.x, a_position.y - this.transform.position.y, a_position.z - this.transform.position.z);
+        AddNodeRelPos(position, depth, type);
     }
 
-    public void AddNodeRelPos(Vector3 position, byte depth, int type) {
-        int depthcoord = (int)this.octreeSize / (2 * depth);
-        position = new Vector3((int)Math.Floor(position.x) / depthcoord, (int)Math.Floor(position.y) / depthcoord, (int)Math.Floor(position.z) / depthcoord);
+    public void AddNodeRelPos(Vector3 a_position, byte depth, int type) {
+        int depthcoord = (int)this.octreeSize / (int)(Math.Pow(2, depth));
+        Vector3 position = new Vector3((int)Math.Floor(a_position.x) / depthcoord, (int)Math.Floor(a_position.y) / depthcoord, (int)Math.Floor(a_position.z) / depthcoord);
         AddNodeLocID(olc.Vec3ToLoc(position, depth), type);
     }
 
     public void AddNodeLocID(long locID, int type)
     {
-        if (!materialdic.ContainsKey(type))
-        {
-            this.materialdic.Add(type, this.materialdic.Count);
-        }
+        
+        //if (!materialdic.ContainsKey(type))
+        //{
+        //    this.materialdic.Add(type, this.materialdic.Count);
+        //}
         this.octree.Add(locID, type);
+        
     }
-   
+
+    public void MergeNodes()
+    {
+        Dictionary<long, int> deletedic = new Dictionary<long, int>();
+        Dictionary<long, int> adddic = new Dictionary<long, int>();
+        foreach (KeyValuePair<long, int> node in this.octree)
+        {
+            if (!deletedic.ContainsKey(node.Key)){
+                long parent = olc.CalculateParent(node.Key);
+                Array children = olc.CollectChildrenAll(parent);
+                bool same = true;
+                //Check for any children that are different
+                for (int i = 1; i < children.Length; i++)
+                {
+                    if (octree[(long)children.GetValue(i)] != octree[(long)children.GetValue(0)])
+                    {
+                        same = false;
+                        break;
+                    }
+                }
+                if (same == true)
+                {
+                    adddic.Add(parent, octree[node.Key]);
+                    foreach (long child in children)
+                    {
+                        if (!deletedic.ContainsKey(child))
+                        {
+                            deletedic.Add(child, octree[child]);
+                        }
+                    }
+                }
+                //If children are all the same, add to remove, and add parent to octree
+            }
+        }
+        foreach (KeyValuePair<long, int> deleted in deletedic)
+        {
+            octree.Remove(deleted.Key);
+        }
+        foreach (KeyValuePair<long, int> added in adddic)
+        {
+            octree.Add(added.Key, added.Value);
+        }
+    }
+
+
+
 }
 
    

@@ -221,8 +221,8 @@ public class Octree_Controller_v3 : MonoBehaviour
         }
         else if (octree.ContainsKey(Convert.ToInt32(adjacent))) //Check to see if Adjacent is in Octree Dictionary
         {
-            bool codetransparency = block_Manager.blocklist[octree[Convert.ToInt32(code)]].transparency;
-            bool adjacenttransparency = block_Manager.blocklist[octree[Convert.ToInt32(adjacent)]].transparency;
+            bool codetransparency = block_Manager.blocklist[octree[Convert.ToInt32(code)]].translucent;
+            bool adjacenttransparency = block_Manager.blocklist[octree[Convert.ToInt32(adjacent)]].translucent;
 
             if (adjacenttransparency == true &&  codetransparency != adjacenttransparency) //Is adjacent transparent
             {
@@ -240,8 +240,8 @@ public class Octree_Controller_v3 : MonoBehaviour
             {
                 if (octree.ContainsKey(Convert.ToInt32(parent)))
                 {
-                    bool codetransparency = block_Manager.blocklist[octree[Convert.ToInt32(code)]].transparency;
-                    bool adjacenttransparency = block_Manager.blocklist[octree[Convert.ToInt32(parent)]].transparency;
+                    bool codetransparency = block_Manager.blocklist[octree[Convert.ToInt32(code)]].translucent;
+                    bool adjacenttransparency = block_Manager.blocklist[octree[Convert.ToInt32(parent)]].translucent;
 
                     if (adjacenttransparency == true && codetransparency != adjacenttransparency)
                     {

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,7 +16,7 @@ public class Chunk_Manager : MonoBehaviour
 
     //Chunk Parameters
     private int chunkSize;
-    private int chunkMaxDepth;
+    private byte chunkMaxDepth;
     private int blockMinSize;
 
 
@@ -38,8 +39,7 @@ public class Chunk_Manager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        AddChunk(new Vector3(0, 0, 0));
-        AddChunk(new Vector3(0, 16, 0));
+        
     }
 
     // Update is called once per frame
@@ -50,7 +50,7 @@ public class Chunk_Manager : MonoBehaviour
 
     }
 
-    public void SetChunkManager(int a_worldseed, int a_chunksize, int a_chunkmaxdepth, Block_Manager a_blockmanager)
+    public void SetChunkManager(int a_worldseed, int a_chunksize, byte a_chunkmaxdepth, Block_Manager a_blockmanager)
     {
         //Set Procedural Seed
         worldSeed = a_worldseed;
@@ -78,6 +78,21 @@ public class Chunk_Manager : MonoBehaviour
     private void AddChunk(Vector3 a_pos)
     {
         chunkPool.Add(new Vector3Int((int)a_pos.x, (int)a_pos.y, (int)a_pos.z), ChunkSetUp(a_pos));
+    }
+
+    public void AddBlock(Vector3 a_pos, int type)
+    {
+        Vector3 targetVec3 = new Vector3((float)Math.Floor(a_pos.x / chunkSize) * chunkSize, (float)Math.Floor(a_pos.y / chunkSize) * chunkSize, (float)Math.Floor(a_pos.z / chunkSize) * chunkSize);
+        Vector3Int targetkey = new Vector3Int((int)targetVec3.x, (int)targetVec3.y, (int)targetVec3.z);
+        if (chunkPool.ContainsKey(targetkey) == true)
+        {
+            chunkPool[targetkey].GetComponent<Octree_Controller>().AddNodeAbsPos(a_pos, chunkMaxDepth, type);
+        }
+        else
+        {
+            AddChunk(new Vector3((float)Math.Floor(a_pos.x / chunkSize) * chunkSize, (float)Math.Floor(a_pos.y / chunkSize) * chunkSize, (float)Math.Floor(a_pos.z / chunkSize) * chunkSize));
+            chunkPool[targetkey].GetComponent<Octree_Controller>().AddNodeAbsPos(a_pos, chunkMaxDepth, type);
+        }
     }
 
 }

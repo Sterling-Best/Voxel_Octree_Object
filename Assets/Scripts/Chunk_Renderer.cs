@@ -25,13 +25,13 @@ public class Chunk_Renderer
         //Set up Mesh
         octree_mesh.Clear(); 
         //Set Up Materials
-        octree_mesh.subMeshCount = materialdic.Count;
-        Material[] materiallist = new Material[materialdic.Count];
+        //octree_mesh.subMeshCount = materialdic.Count;
+        //Material[] materiallist = new Material[materialdic.Count];
         //Collect Materials that belong in this chunk
-        foreach (int key in materialdic.Keys)
-        {
-            materiallist[materialdic[key]] = chunk.GetComponent<Octree_Controller>().block_Manager.blockMaterialList[key];
-        }
+        //foreach (int key in materialdic.Keys)
+        //{
+        //    materiallist[materialdic[key]] = chunk.GetComponent<Octree_Controller>().block_Manager.blockMaterialList[key];
+        //}
         //Check each node in the octree if it should be rendered. 
         foreach (int code in octree.Keys)
         {
@@ -47,7 +47,8 @@ public class Chunk_Renderer
                 {
 
                     float tier_size = octreeSize * (1 / (float)Math.Pow(2, olc.CalculateDepth(code)));
-                    Vector3 locpos = olc.LocToVec3(code) * tier_size;
+                    Vector3 test = olc.LocToVec3(code);
+                    Vector3 locpos = test * tier_size;
 
                     Vector3[] verts = {
                     locpos + new Vector3 (0, 0, 0),
@@ -122,7 +123,8 @@ public class Chunk_Renderer
                         facetriangles.AddRange(sidetriangles);
                     }
                     octree_mesh.vertices = CombineVector3Arrays(octree_mesh.vertices, verts);
-                    octree_mesh.SetTriangles(CombineIntArrays(octree_mesh.GetTriangles(materialdic[octree[code]]), facetriangles.ToArray()), materialdic [octree[code]]);
+                    //octree_mesh.SetTriangles(CombineIntArrays(octree_mesh.GetTriangles(materialdic[octree[code]]), facetriangles.ToArray()), materialdic [octree[code]]);
+                    octree_mesh.triangles = CombineIntArrays(octree_mesh.triangles, facetriangles.ToArray());
                     count++;
                 }       
                 else
@@ -134,24 +136,32 @@ public class Chunk_Renderer
             {
                 continue;
             }
-            octree_MeshRender.materials = materiallist.ToArray();
-            octree_mesh.RecalculateNormals();
-            octree_mesh.RecalculateBounds();
+            //octree_MeshRender.materials = materiallist.ToArray();
+            
+            
         }
+        octree_MeshRender.material = (Material)Resources.Load("Default", typeof(Material));
+        octree_mesh.RecalculateNormals();
+        octree_mesh.RecalculateBounds();
     }
 
     private bool DetermineSideRender(Dictionary<long, int> octree, long code, long adjacent)
     {
+        bool codeopaque = block_Manager.blocklist[octree[Convert.ToInt32(code)]].opaque;
+        if (codeopaque == false)
+        {
+            return false;
+        }
         if (adjacent == code) // Adjacent is the same as code if they are at the edge of a chunk, should render.
         {
             return true;
         }
         else if (octree.ContainsKey(Convert.ToInt32(adjacent))) //Check to see if Adjacent is in Octree Dictionary
         {
-            bool codetransparency = block_Manager.blocklist[octree[Convert.ToInt32(code)]].transparency;
-            bool adjacenttransparency = block_Manager.blocklist[octree[Convert.ToInt32(adjacent)]].transparency;
+            bool codetranslucent = block_Manager.blocklist[octree[Convert.ToInt32(code)]].translucent;
+            bool adjacenttransparency = block_Manager.blocklist[octree[Convert.ToInt32(adjacent)]].translucent;
 
-            if (adjacenttransparency == true && codetransparency != adjacenttransparency) //Is adjacent transparent
+            if (adjacenttransparency == true && codetranslucent != adjacenttransparency) //Is adjacent transparent
             {
                 return true;
             }
@@ -167,8 +177,8 @@ public class Chunk_Renderer
             {
                 if (octree.ContainsKey(Convert.ToInt32(parent)))
                 {
-                    bool codetransparency = block_Manager.blocklist[octree[Convert.ToInt32(code)]].transparency;
-                    bool adjacenttransparency = block_Manager.blocklist[octree[Convert.ToInt32(parent)]].transparency;
+                    bool codetransparency = block_Manager.blocklist[octree[Convert.ToInt32(code)]].translucent;
+                    bool adjacenttransparency = block_Manager.blocklist[octree[Convert.ToInt32(parent)]].translucent;
 
                     if (adjacenttransparency == true && codetransparency != adjacenttransparency)
                     {
@@ -181,7 +191,7 @@ public class Chunk_Renderer
                 }
             }
         }
-        return false;
+        return true;
     }
 
     private bool ChildrenSideTransparencyCheck(long m, byte axis, bool positive)

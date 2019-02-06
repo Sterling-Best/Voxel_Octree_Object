@@ -7,8 +7,8 @@ public class Block_Manager
 
     public Block[] blocklist =
     {
-        new Block(0,0,true,"[0]AirBlock"), new Block(0,1,false,"[1]DirtBlock"),
-        new Block(0,2,false,"[2]GrassBlock"), new Block(0,3,false,"[3]StoneBlock")
+        new Block(0,0,false, true,"[0]AirBlock"), new Block(0,1,true, false,"[1]DirtBlock"),
+        new Block(0,2,true, false, "[2]GrassBlock"), new Block(0,3,true, false,"[3]StoneBlock")
     };
 
    public List<Material> blockMaterialList = new List<Material>();
@@ -21,6 +21,5 @@ public class Block_Manager
             Material material = Resources.Load(fileString, typeof(Material)) as Material;
             blockMaterialList.Add(material);
         }
-        Debug.Log("Block_Manager Material List: " + blockMaterialList);
     }
 }
