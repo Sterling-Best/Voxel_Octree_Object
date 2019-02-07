@@ -23,6 +23,8 @@ public class Octree_Controller : MonoBehaviour
 
     public float octreeSize;
 
+    public byte chunkMaxDepth;
+
     Vector3 octreepos;
 
     Vector3 octreelimitpos;
@@ -53,7 +55,8 @@ public class Octree_Controller : MonoBehaviour
         // Use this for initialization
         void Start()
     {
-        MergeNodes();
+        MergeAllNodes();
+
         chunk_Renderer.DrawChunk(gameObject);
     }
 
@@ -88,46 +91,58 @@ public class Octree_Controller : MonoBehaviour
         
     }
 
-    public void MergeNodes()
+    public void MergeAllNodes()
     {
-        Dictionary<long, int> deletedic = new Dictionary<long, int>();
-        Dictionary<long, int> adddic = new Dictionary<long, int>();
-        foreach (KeyValuePair<long, int> node in this.octree)
+        for (int d = chunkMaxDepth; d > 0; d--)
         {
-            if (!deletedic.ContainsKey(node.Key)){
-                long parent = olc.CalculateParent(node.Key);
-                Array children = olc.CollectChildrenAll(parent);
-                bool same = true;
-                //Check for any children that are different
-                for (int i = 1; i < children.Length; i++)
+            Dictionary<long, int> deletedic = new Dictionary<long, int>();
+            Dictionary<long, int> adddic = new Dictionary<long, int>();
+            for (int i = (int)Math.Pow(8, d); i < ((int)Math.Pow(8, d) *2); i++)
+            {
+                if (octree.ContainsKey(i) && !deletedic.ContainsKey(i) )
                 {
-                    if (octree[(long)children.GetValue(i)] != octree[(long)children.GetValue(0)])
+                    long parent = olc.CalculateParent(i);
+                    Array children = olc.CollectChildrenAll(parent);
+                    bool same = true;
+                    //Check for any children that are different
+                    for (int c = 0; c < children.Length; c++)
                     {
-                        same = false;
-                        break;
-                    }
-                }
-                if (same == true)
-                {
-                    adddic.Add(parent, octree[node.Key]);
-                    foreach (long child in children)
-                    {
-                        if (!deletedic.ContainsKey(child))
+                        if (octree.ContainsKey((long)children.GetValue(c)))
                         {
-                            deletedic.Add(child, octree[child]);
+                            if (octree[(long)children.GetValue(c)] != octree[(long)children.GetValue(0)])
+                            {
+                                same = false;
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            same = false;
+                            break;
                         }
                     }
+                    if (same == true)
+                    {
+                        adddic.Add(parent, octree[i]);
+                        foreach (long child in children)
+                        {
+                            if (!deletedic.ContainsKey(child))
+                            {
+                                deletedic.Add(child, octree[child]);
+                            }
+                        }
+                    }
+                    //If children are all the same, add to remove, and add parent to octree
                 }
-                //If children are all the same, add to remove, and add parent to octree
             }
-        }
-        foreach (KeyValuePair<long, int> deleted in deletedic)
-        {
-            octree.Remove(deleted.Key);
-        }
-        foreach (KeyValuePair<long, int> added in adddic)
-        {
-            octree.Add(added.Key, added.Value);
+            foreach (KeyValuePair<long, int> deleted in deletedic)
+            {
+                octree.Remove(deleted.Key);
+            }
+            foreach (KeyValuePair<long, int> added in adddic)
+            {
+                octree.Add(added.Key, added.Value);
+            }
         }
     }
 

@@ -63,6 +63,8 @@
   <ItemGroup>
     <Compile Include="Assets\Editor\Octree_Controller_Tests.cs" />
     <Compile Include="Assets\Editor\Octree_LocationCode_Tests.cs" />
+    <Compile Include="Assets\Tayx\Graphy - Ultimate Stats Monitor\Scripts\Editor\GraphyDebuggerEditor.cs" />
+    <Compile Include="Assets\Tayx\Graphy - Ultimate Stats Monitor\Scripts\Editor\GraphyManagerEditor.cs" />
     <Reference Include="Unity.TextMeshPro.Editor">
       <HintPath>C:/Users/methl/Documents/Serfs/Voxel_Octree_Object/Library/ScriptAssemblies/Unity.TextMeshPro.Editor.dll</HintPath>
     </Reference>

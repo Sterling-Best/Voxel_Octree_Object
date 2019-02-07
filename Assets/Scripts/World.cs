@@ -9,6 +9,7 @@ public class World : MonoBehaviour
     public bool randomSeed = false;
     public int worldSeed;
 
+    public int ChunkDistance = 8;
 
     public int chunkSize = 16;
     public byte chunkMaxDepth = 4;
@@ -17,24 +18,25 @@ public class World : MonoBehaviour
 
     private Block_Manager block_Manager;
 
+    //Awake is called before start - Used for initialization
     private void Awake()
     {
+        Application.targetFrameRate = 300;
         chunk_Manager = new GameObject();
         block_Manager = new Block_Manager();
         ChunkManagerSetUp();
     }
 
     // Start is called before the first frame update
+    //Used for Set-up
     void Start()
     {
-        //AddBlock(new Vector3(0, 0, 0), 1);
-        //AddBlock(new Vector3(1, 0, 0), 1);
-        for (int x = 0; x < 64; x++)
+        for (int x = 0; x < 128; x++)
         {
-            for (int z = 0; z < 64; z++)
+            for (int z = 0; z < 128; z++)
             {
-                int yr = UnityEngine.Random.Range(20, 30);
-                for (int y = 0; y < 32; y++)
+                int yr = UnityEngine.Random.Range(10, 120);
+                for (int y = 0; y < 128; y++)
                 {
                     if (y < yr)
                     {
@@ -47,18 +49,6 @@ public class World : MonoBehaviour
                 }
             }
         }
-
-        //chunk_Manager.GetComponent<Chunk_Manager>().chunkPool[new Vector3Int(0, 0, 0)].GetComponent<Octree_Controller>().MergeNodes();
-
-
-
-        //AddBlock(new Vector3(0,0,0), 1);
-        //AddBlock(new Vector3(0, 0, 15), 1);
-        //AddBlock(new Vector3(17, 17, 17), 1);
-        //AddBlock(new Vector3(-1, -1, -1), 1);
-
-
-
     }
 
     // Update is called once per frame
@@ -71,7 +61,7 @@ public class World : MonoBehaviour
     {
         chunk_Manager.name = "Chunk Manager";
         chunk_Manager.AddComponent<Chunk_Manager>();
-        chunk_Manager.GetComponent<Chunk_Manager>().SetChunkManager(this.worldSeed, this.chunkSize, this.chunkMaxDepth, this.block_Manager);
+        chunk_Manager.GetComponent<Chunk_Manager>().SetChunkManager(this.worldSeed, this.chunkSize, this.chunkMaxDepth, ChunkDistance, this.block_Manager);
 
     }
 
