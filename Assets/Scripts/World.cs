@@ -9,7 +9,7 @@ public class World : MonoBehaviour
     public bool randomSeed = false;
     public int worldSeed;
 
-    public int ChunkDistance = 8;
+    public int ChunkDistance = 4;
 
     public int chunkSize = 16;
     public byte chunkMaxDepth = 4;
@@ -35,7 +35,6 @@ public class World : MonoBehaviour
         {
             for (int z = 0; z < 128; z++)
             {
-                int yr = UnityEngine.Random.Range(10, 120);
                 for (int y = 0; y < 128; y++)
                 {
                     if (y < yr)
