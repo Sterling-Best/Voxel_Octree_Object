@@ -35,6 +35,7 @@ public class World : MonoBehaviour
         {
             for (int z = 0; z < 128; z++)
             {
+                float yr = Mathf.PerlinNoise(x*.019f,z *.019f) * 70;
                 for (int y = 0; y < 128; y++)
                 {
                     if (y < yr)
