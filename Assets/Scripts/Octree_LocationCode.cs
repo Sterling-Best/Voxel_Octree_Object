@@ -211,4 +211,14 @@ public class OT_LocCode
             return false;
         }
     }
+
+    public long CalculateOppositEdge(long n)
+    {
+        long[] axismask = { 0x6DB6DB6DB6DB6DB6, 0x5B6DB6DB6DB6DB6D, 0x36DB6DB6DB6DB6DB };
+        int depthmodifier = (Convert.ToInt32(Math.Pow(8, Convert.ToInt32(Math.Log(n, 8)))));
+        n = (n ^ depthmodifier); //Removes Depth Modifier at far right
+        //n = n & (axismask[axis]); //Modifies 
+        n = (n | depthmodifier);
+        return n;
+    }
 }

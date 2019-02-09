@@ -255,6 +255,15 @@ public class Octree_LocationCode_Tests{
         Assert.Throws<ArgumentException>(() => m = lc.CalculateChildSpecific(1,8));
     }
 
+    [Test]
+    public void CalculateOppositeEdge_Test1()
+    {
+        OT_LocCode lc = new OT_LocCode();
+        long[] Testcodes = { lc.CalculateOppositEdge(127), lc.CalculateOppositEdge(100) };
+        long[] TestAssert = {91, 64};
+        CollectionAssert.AreEqual(TestAssert, Testcodes);
+    }
+
 
 }
 

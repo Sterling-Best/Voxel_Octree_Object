@@ -8,7 +8,13 @@ public class Chunk_Renderer
 {
     OT_LocCode olc = new OT_LocCode();
     Block_Manager block_Manager;
-    
+    const byte axisZ = 0;
+    const byte axisY = 1;
+    const byte axisX = 2;
+
+
+
+
 
 
     public void DrawChunk(GameObject chunk)
@@ -39,9 +45,9 @@ public class Chunk_Renderer
             {
             //Only Render if node is  (has no children, identified if a key exists with string (current node.locationCode + "000"))
 
-                bool[] sidestorender = { DetermineSideRender(octree, code, olc.CalculateAdjacent(code, 0, -1)), DetermineSideRender(octree, code, olc.CalculateAdjacent(code, 1, 1)), // -z, +y
-                     DetermineSideRender(octree, code, olc.CalculateAdjacent(code, 2, 1)), DetermineSideRender(octree, code, olc.CalculateAdjacent(code, 2, -1)), // +x, -x
-                     DetermineSideRender(octree, code, olc.CalculateAdjacent(code, 0, 1)), DetermineSideRender(octree, code, olc.CalculateAdjacent(code, 1, -1))}; // +z, -y
+                bool[] sidestorender = { DetermineSideRender(octree, code, olc.CalculateAdjacent(code, axisZ, -1)), DetermineSideRender(octree, code, olc.CalculateAdjacent(code, axisY, 1)), // -z, +y
+                     DetermineSideRender(octree, code, olc.CalculateAdjacent(code, axisX, 1)), DetermineSideRender(octree, code, olc.CalculateAdjacent(code, axisX, -1)), // +x, -x
+                     DetermineSideRender(octree, code, olc.CalculateAdjacent(code, axisZ, 1)), DetermineSideRender(octree, code, olc.CalculateAdjacent(code, axisY, -1))}; // +z, -y
 
                 if (sidestorender.Any(x => x)) //If at least one side can be rendered
                 {
@@ -59,66 +65,102 @@ public class Chunk_Renderer
                     locpos + new Vector3 (tier_size, tier_size, tier_size),
                     locpos + new Vector3 (tier_size, 0, tier_size),
                     locpos + new Vector3 (0, 0, tier_size),
+                    //Side Z-
+                    locpos + new Vector3 (0, 0, 0),
+                    locpos + new Vector3 (tier_size * GreedyAdjacent(octree, code, axisX, axisZ, -1), 0, 0),
+                    locpos + new Vector3 (tier_size * GreedyAdjacent(octree, code, axisX, axisZ, -1), tier_size, 0),
+                    locpos + new Vector3 (0, tier_size, 0),
+                    //Side Y+
+                    locpos + new Vector3 (tier_size * GreedyAdjacent(octree, code, axisX, axisY, 1), tier_size, 0),
+                    locpos + new Vector3 (0, tier_size, 0),
+                    locpos + new Vector3 (0, tier_size, tier_size),
+                    locpos + new Vector3 (tier_size * GreedyAdjacent(octree, code, axisX, axisY, 1), tier_size, tier_size),
+                    //Side X+
+                    locpos + new Vector3 (tier_size, 0, 0),
+                    locpos + new Vector3 (tier_size, tier_size, 0),
+                    locpos + new Vector3 (tier_size, tier_size, tier_size * GreedyAdjacent(octree, code, axisZ, axisX, 1)),
+                    locpos + new Vector3 (tier_size, 0, tier_size * GreedyAdjacent(octree, code, axisZ, axisX, 1)),
+                    //Side X-
+                    locpos + new Vector3 (0, 0, 0),
+                    locpos + new Vector3 (0, tier_size, 0),
+                    locpos + new Vector3 (0, tier_size, tier_size * GreedyAdjacent(octree, code, axisZ, axisX, -1)),
+                    locpos + new Vector3 (0, 0, tier_size * GreedyAdjacent(octree, code, axisZ, axisX, -1)),
+                    //Side Z+
+                    locpos + new Vector3 (0, tier_size, tier_size),
+                    locpos + new Vector3 (tier_size * GreedyAdjacent(octree, code, axisX, axisZ, 1), tier_size, tier_size),
+                    locpos + new Vector3 (tier_size * GreedyAdjacent(octree, code, axisX, axisZ, 1), 0, tier_size),
+                    locpos + new Vector3 (0, 0, tier_size),
+                    //Side Y-
+                    locpos + new Vector3 (0, 0, 0),
+                    locpos + new Vector3 (tier_size * GreedyAdjacent(octree, code, axisX, axisY, -1), 0, 0),
+                    locpos + new Vector3 (tier_size * GreedyAdjacent(octree, code, axisX, axisY, -1), 0, tier_size),
+                    locpos + new Vector3 (0, 0, tier_size),
+
+
                     };
+                    
 
-                   List<int> facetriangles = new List<int>();
-
+                    List<int> facetriangles = new List<int>();
+                    int lengthverts = verts.Length;
                     //face front: -z
-                    if (sidestorender[0])
+                    if (sidestorender[0] && !GreedySubAdjacent(octree, code, axisX, axisZ, -1)) //Should this side show? Plus Greedmesh Check
                     {
-                        int[] sidetriangles = {
-                            (count * 8) + 0, (count * 8) + 2, (count * 8) + 1, //f-z t1
-                            (count * 8) + 0, (count * 8) + 3, (count * 8) + 2, //f-z t2
+                            int[] sidetriangles = {
+                            (count * lengthverts) + 8, (count * lengthverts) + 10, (count * lengthverts) + 9, //f-z t1
+                            (count * lengthverts) + 8, (count * lengthverts) + 11, (count * lengthverts) + 10, //f-z t2
                          };
-                        facetriangles.AddRange(sidetriangles);
+                            facetriangles.AddRange(sidetriangles);
                     }
 
                     //face top: +y
-                    if (sidestorender[1])
+                    if (sidestorender[1] && !GreedySubAdjacent(octree, code, axisX, axisY, 1)) //Should this side show? Plus Greedmesh Check
                     {
-                        int[] sidetriangles = {
-                            (count * 8) + 2, (count * 8) + 3, (count * 8) + 4, //t+y t1
-			                (count * 8) + 2, (count * 8) + 4, (count * 8) + 5, //t+y t2
-                        };
-                        facetriangles.AddRange(sidetriangles);
+                            int[] sidetriangles = {
+                            (count * lengthverts) + 12, (count * lengthverts) + 13, (count * lengthverts) + 14, //t+y t1
+			                (count * lengthverts) + 12, (count * lengthverts) + 14, (count * lengthverts) + 15, //t+y t2
+                            };
+                            facetriangles.AddRange(sidetriangles);
                     }
+                        
+                    
 
                     //face right: +x
-                    if (sidestorender[2])
+                    if (sidestorender[2] && !GreedySubAdjacent(octree, code, axisZ, axisX, 1)) //Should this side show? Plus Greedmesh Check
                     {
-                        int[] sidetriangles = {
-                            (count * 8) + 1, (count * 8) + 2, (count * 8) + 5, //r+x t1
-                            (count * 8) + 1, (count * 8) + 5, (count * 8) + 6, //r+x t2
+                            int[] sidetriangles = {
+                            (count * lengthverts) + 16, (count * lengthverts) + 17, (count * lengthverts) + 18, //r+x t1
+                            (count * lengthverts) + 16, (count * lengthverts) + 18, (count * lengthverts) + 19, //r+x t2
                          };
-                        facetriangles.AddRange(sidetriangles);
+                            facetriangles.AddRange(sidetriangles);
+                        
                     }
 
                     //face left: -x
-                    if (sidestorender[3])
+                    if (sidestorender[3] && !GreedySubAdjacent(octree, code, axisZ, axisX, -1)) //Should this side show? Plus Greedmesh Check
                     {
                         int[] sidetriangles = {
-                            (count * 8) + 0, (count * 8) + 7, (count * 8) + 4, //l-x t1
-                            (count * 8) + 0, (count * 8) + 4, (count * 8) + 3, //l-x t2
+                            (count * lengthverts) + 20, (count * lengthverts) + 23, (count * lengthverts) + 22, //l-x t1
+                            (count * lengthverts) + 20, (count * lengthverts) + 22, (count * lengthverts) + 21, //l-x t2
                          };
                         facetriangles.AddRange(sidetriangles);
                     }
 
                     //face back: +z
-                    if (sidestorender[4])
+                    if (sidestorender[4] && !GreedySubAdjacent(octree, code, axisX, axisZ, 1)) //Checking side - Plus Greedmesh Check
                     {
                         int[] sidetriangles = {
-                            (count * 8) + 5, (count * 8) + 4, (count * 8) + 7, //l-z t1
-                            (count * 8) + 5, (count * 8) + 7, (count * 8) + 6, //l-z t2
+                            (count * lengthverts) + 25, (count * lengthverts) + 24, (count * lengthverts) + 27, //l-z t1
+                            (count * lengthverts) + 25, (count * lengthverts) + 27, (count * lengthverts) + 26, //l-z t2
                          };
                         facetriangles.AddRange(sidetriangles);
                     }
 
                     //face bottom: -y
-                    if (sidestorender[5])
+                    if (sidestorender[5] && !GreedySubAdjacent(octree, code, axisX, axisY, -1)) //Checking Side -  Plus Greedmesh Check
                     {
                         int[] sidetriangles = {
-                            (count * 8) + 0, (count * 8) + 6, (count * 8) + 7, //b-y t1
-                            (count * 8) + 0, (count * 8) + 1, (count * 8) + 6  //b-y t2
+                            (count * lengthverts) + 28, (count * lengthverts) + 30, (count * lengthverts) + 31, //b-y t1
+                            (count * lengthverts) + 28, (count * lengthverts) + 29, (count * lengthverts) + 30  //b-y t2
                         };
                         facetriangles.AddRange(sidetriangles);
                     }
@@ -143,6 +185,7 @@ public class Chunk_Renderer
         octree_MeshRender.material = (Material)Resources.Load("Default", typeof(Material));
         octree_mesh.RecalculateNormals();
         octree_mesh.RecalculateBounds();
+        chunk.GetComponent<MeshCollider>().sharedMesh = octree_mesh;
     }
 
     private bool DetermineSideRender(Dictionary<long, int> octree, long code, long adjacent)
@@ -154,6 +197,7 @@ public class Chunk_Renderer
         }
         if (adjacent == code) // Adjacent is the same as code if they are at the edge of a chunk, should render.
         {
+
             return true;
         }
         else if (octree.ContainsKey(Convert.ToInt32(adjacent))) //Check to see if Adjacent is in Octree Dictionary
@@ -254,4 +298,36 @@ public class Chunk_Renderer
         }
         return vectstr;
     }
+
+    private bool GreedySubAdjacent(Dictionary<long,int> octree, long m, byte axis, byte side, int dir)
+    {
+        long adjacent = olc.CalculateAdjacent(m, axis, -1);
+        
+        if (octree.ContainsKey(adjacent))
+        {
+            if (m != adjacent && block_Manager.blocklist[octree[m]].itemcode == block_Manager.blocklist[octree[adjacent]].itemcode &&
+                    olc.CalculateDepth(m) == olc.CalculateDepth(adjacent) && DetermineSideRender(octree, adjacent, olc.CalculateAdjacent(adjacent, side, dir))) //TODO: Interior nodes may still render
+            {
+                return true;
+           }
+        }
+        return false;
+
+    }
+
+    private int GreedyAdjacent(Dictionary<long, int> octree, long m, byte axis, byte side, int dir)
+    {
+        int modifiercount = 1;
+        long adjacent = olc.CalculateAdjacent(m, axis, 1);
+        if (octree.ContainsKey(adjacent))
+        {
+            if (m != adjacent && block_Manager.blocklist[octree[m]].itemcode == block_Manager.blocklist[octree[adjacent]].itemcode &&
+                    olc.CalculateDepth(m) == olc.CalculateDepth(adjacent) && DetermineSideRender(octree, adjacent, olc.CalculateAdjacent(adjacent, side, dir)))
+            {
+                modifiercount += GreedyAdjacent(octree, adjacent, axis, side, dir);
+            }
+        }
+        return modifiercount;
+    }
 }
+    

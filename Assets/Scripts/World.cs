@@ -21,7 +21,7 @@ public class World : MonoBehaviour
     //Awake is called before start - Used for initialization
     private void Awake()
     {
-        Application.targetFrameRate = 300;
+        Application.targetFrameRate = -1;
         chunk_Manager = new GameObject();
         block_Manager = new Block_Manager();
         ChunkManagerSetUp();
@@ -31,31 +31,38 @@ public class World : MonoBehaviour
     //Used for Set-up
     void Start()
     {
-        for (int x = 0; x < 128; x++)
-        {
-            for (int z = 0; z < 128; z++)
+        for (int y = 0; y < 256; y++) { 
+            for (int x = 0; x < 256; x++)
             {
-                float yr = Mathf.PerlinNoise(x*.019f,z *.019f) * 70;
-                for (int y = 0; y < 128; y++)
+                for (int z = 0; z < 256; z++)
                 {
-                    if (y < yr)
-                    {
-                        AddBlock(new Vector3(x, y, z), 1);
-                    }
-                    else
-                    {
-                        AddBlock(new Vector3(x, y, z), 0);
-                    }
+                    float yr = Mathf.PerlinNoise(x * .019f, z * .019f) * 70;
+                        //Debug.Log(x + "," + y + "," + z);
+                        if (y < yr)
+                        {
+                            AddBlock(new Vector3(x, y, z), 1);
+                        }
+                        else
+                        {
+                            AddBlock(new Vector3(x, y, z), 0);
+                        }
+
                 }
             }
         }
     }
 
+    bool startrendering = true;
+
     // Update is called once per frame
     void Update()
     {
-        
+        if (startrendering == true){
+            startrendering = false;
+            chunk_Manager.GetComponent<Chunk_Manager>().StartRender();
+        }
     }
+
 
     private void ChunkManagerSetUp()
     {

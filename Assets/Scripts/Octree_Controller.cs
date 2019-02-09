@@ -41,7 +41,7 @@ public class Octree_Controller : MonoBehaviour
 
     public static int count = 0;
 
-    Chunk_Renderer chunk_Renderer = new Chunk_Renderer();
+    public Chunk_Renderer chunk_Renderer = new Chunk_Renderer();
 
     private void Awake()
     {
@@ -55,9 +55,6 @@ public class Octree_Controller : MonoBehaviour
         // Use this for initialization
         void Start()
     {
-        MergeAllNodes();
-
-        chunk_Renderer.DrawChunk(gameObject);
     }
 
 
