@@ -21,16 +21,21 @@ public class Chunk_Manager : MonoBehaviour
     private byte chunkMaxDepth;
     private int blockMinSize;
 
-    private Queue<GameObject> chunkPool;
+    GameObject defaultChunk;
+    
 
     //Dictionary of Chunks that is currently loaded into the game.
     public Dictionary<Vector3Int, GameObject> currChunks = new Dictionary<Vector3Int, GameObject>();
+    private Queue<GameObject> chunkPool;
+    private Queue<Vector3Int> loadOrder = new Queue<Vector3Int>();
+
     public Chunk_Renderer chunk_Renderer = new Chunk_Renderer();
 
     
     //Block Manager for Block Details - Mainly to hand off as reference to chunk
     private Block_Manager blockManager;
     IEnumerator render;
+    IEnumerator merge;
 
     /*
      Notes for Loading Cubes, to start the game quickly
@@ -43,6 +48,7 @@ public class Chunk_Manager : MonoBehaviour
     private void Awake()
     {
         render = RenderChunks();
+        merge = MergeChunkNodes();
         blockMinSize = (int)(chunkSize / (Mathf.Pow(2, chunkMaxDepth)));
 
         //TODO: Remove Tests
@@ -68,36 +74,25 @@ public class Chunk_Manager : MonoBehaviour
     {
         blockManager = a_blockmanager;
         chunkPool = new Queue<GameObject>();
-        //Set Procedural Seed
-        worldSeed = a_worldseed;
-
-        //Set Chunk Parameters
+        defaultChunk = (GameObject)Instantiate(Resources.Load("Prefabs/defaultChunk"));
         chunkSize = a_chunksize;
         chunkMaxDepth = a_chunkmaxdepth;
         chunkNumLimit = (int)Math.Pow((a_chunkdistance * 2), 3);
+        defaultChunk.GetComponent<Octree_Controller>().octreeSize = chunkSize;
+        defaultChunk.GetComponent<Octree_Controller>().chunkMaxDepth = chunkMaxDepth;
+        defaultChunk.GetComponent<Octree_Controller>().chunk_Renderer = chunk_Renderer;
+        //Set Procedural Seed
+        worldSeed = a_worldseed;
+        //Load Chunks inot Pool
         for (int i = 0; i < chunkNumLimit; i++)
         {
-            GameObject chunk = ChunkSetUp();
+            GameObject chunk = Instantiate(defaultChunk);
+            chunk.name = "Chunk" + Octree_Controller.count.ToString();
+            chunk.transform.parent = this.transform;
+            chunk.SetActive(false);
             chunkPool.Enqueue(chunk);
         }
         //Set Block Manager
-    }
-
-    private GameObject ChunkSetUp()
-    {
-        GameObject chunk = new GameObject();
-        chunk.name = "Chunk" + Octree_Controller.count.ToString();
-        chunk.AddComponent(typeof(MeshFilter));
-        chunk.AddComponent(typeof(MeshRenderer));
-        chunk.AddComponent(typeof(MeshCollider));
-        chunk.AddComponent<Octree_Controller>();
-        chunk.GetComponent<Octree_Controller>().octreeSize = chunkSize;
-        chunk.GetComponent<Octree_Controller>().chunkMaxDepth = chunkMaxDepth;
-        chunk.GetComponent<Octree_Controller>().chunk_Renderer = chunk_Renderer;
-        chunk.transform.parent = this.transform;
-        //chunk.transform.position = a_pos;
-        chunk.SetActive(false);
-        return chunk;
     }
 
     private void AddChunk(Vector3 a_pos)
@@ -125,33 +120,39 @@ public class Chunk_Manager : MonoBehaviour
 
     public void StartRender()
     {
-        Debug.Log("Start Courintine");
+        Debug.Log("Start Coroutine");
+        //StartCoroutine(merge);
         StartCoroutine(render);
     }
 
     private IEnumerator RenderChunks()
     {
+        //float starttime = Time.time;
+        int count = 0;
         foreach (KeyValuePair<Vector3Int,GameObject> chunk in currChunks)
         {
-            float starttime = Time.time;
             chunk.Value.GetComponent<Octree_Controller>().MergeAllNodes();
             chunk_Renderer.DrawChunk(chunk.Value);
-            if (Time.time - starttime < .017)
+            if (count > 2)
             {
+                count = 0;
                 yield return 0;
             }
+            count++;
         }
         yield return null;
     }
 
-    public IEnumerable MergeChunkNodes()
+    public IEnumerator MergeChunkNodes()
     {
+
         foreach (KeyValuePair<Vector3Int, GameObject> chunk in currChunks)
         {
-            float time = Time.time;
+
             chunk.Value.GetComponent<Octree_Controller>().MergeAllNodes();
-            if (time - Time.time == (1 / 3) * Time.deltaTime)
+            if (Time.deltaTime >= 0.17)
             {
+                //starttime = Time.time;
                 yield return 0;
             }
         }

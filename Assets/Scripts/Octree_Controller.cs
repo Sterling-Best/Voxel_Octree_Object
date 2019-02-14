@@ -90,23 +90,23 @@ public class Octree_Controller : MonoBehaviour
 
     public void MergeAllNodes()
     {
-        for (int d = chunkMaxDepth; d > 0; d--)
+        for (int d = chunkMaxDepth - 1; d >= 0; d--) //Start counting down from max depth
         {
-            Dictionary<long, int> deletedic = new Dictionary<long, int>();
-            Dictionary<long, int> adddic = new Dictionary<long, int>();
-            for (int i = (int)Math.Pow(8, d); i < ((int)Math.Pow(8, d) *2); i++)
+            int depthcode = (int)Math.Pow(8, d);
+            for (long i = depthcode; i < (depthcode * 2); i++) //Going through each possibility of LocationCode for given depth
             {
-                if (octree.ContainsKey(i) && !deletedic.ContainsKey(i) )
+                if (octree.ContainsKey(i))
                 {
-                    long parent = olc.CalculateParent(i);
-                    Array children = olc.CollectChildrenAll(parent);
+                    break;
+                }
+                else
+                {
                     bool same = true;
-                    //Check for any children that are different
-                    for (int c = 0; c < children.Length; c++)
+                    for (byte c = 0; c < 8; c++) //Check through Children
                     {
-                        if (octree.ContainsKey((long)children.GetValue(c)))
+                        if (octree.ContainsKey((i << 3) | c))
                         {
-                            if (octree[(long)children.GetValue(c)] != octree[(long)children.GetValue(0)])
+                            if (octree[(i << 3) | c] != octree[i << 3]) //If child key exists and its not the same as sibling
                             {
                                 same = false;
                                 break;
@@ -120,31 +120,85 @@ public class Octree_Controller : MonoBehaviour
                     }
                     if (same == true)
                     {
-                        adddic.Add(parent, octree[i]);
-                        foreach (long child in children)
+                        octree.Add(i, octree[i << 3]);
+                        for (byte c = 0; c < 8; c++) //Check through Children
                         {
-                            if (!deletedic.ContainsKey(child))
-                            {
-                                deletedic.Add(child, octree[child]);
-                            }
+                            octree.Remove((i << 3) | c);
                         }
                     }
-                    //If children are all the same, add to remove, and add parent to octree
                 }
-            }
-            foreach (KeyValuePair<long, int> deleted in deletedic)
-            {
-                octree.Remove(deleted.Key);
-            }
-            foreach (KeyValuePair<long, int> added in adddic)
-            {
-                octree.Add(added.Key, added.Value);
             }
         }
     }
-
-
-
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //for (int d = chunkMaxDepth; d > 0; d--) //Start counting down from max depth
+        //{
+        //    Dictionary<long, int> deletedic = new Dictionary<long, int>();
+        //    Dictionary<long, int> adddic = new Dictionary<long, int>();
+        //    for (int i = (int)Math.Pow(8, d); i < ((int)Math.Pow(8, d) *2); i++) //Going through each possibility of LocationCode for given depth
+        //    {
+        //        if (octree.ContainsKey(i) && !deletedic.ContainsKey(i) )
+        //        {
+        //            long parent = olc.CalculateParent(i);
+        //            Array children = olc.CollectChildrenAll(parent);
+        //            bool same = true;
+        //            //Check for any children that are different
+        //            for (int c = 0; c < children.Length; c++) //Check through Children
+        //            {
+        //                if (octree.ContainsKey((long)children.GetValue(c))) 
+        //                {
+        //                    if (octree[(long)children.GetValue(c)] != octree[(long)children.GetValue(0)])
+        //                    {
+        //                        same = false;
+        //                        break;
+        //                    }
+        //                    else
+        //                    {
+
+        //                    }
+        //                }
+        //                else
+        //                {
+        //                    same = false;
+        //                    break;
+        //                }
+        //            }
+        //            if (same == true)
+        //            {
+        //                adddic.Add(parent, octree[i]);
+        //                foreach (long child in children)
+        //                {
+        //                    if (!deletedic.ContainsKey(child))
+        //                    {
+        //                        deletedic.Add(child, octree[child]);
+        //                    }
+        //                }
+        //            }
+        //            //If children are all the same, add to remove, and add parent to octree
+        //        }
+        //    }
+        //    foreach (KeyValuePair<long, int> deleted in deletedic)
+        //    {
+        //        octree.Remove(deleted.Key);
+        //    }
+        //    foreach (KeyValuePair<long, int> added in adddic)
+        //    {
+        //        octree.Add(added.Key, added.Value);
+        //    }
+        //}
 
    
