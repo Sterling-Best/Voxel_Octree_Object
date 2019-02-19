@@ -216,22 +216,22 @@ PrefabInstance:
     - target: {fileID: 1999353520156687794, guid: d20bd1301bb838a47a4b9415a276b157,
         type: 3}
       propertyPath: m_Name
-      value: Capsule
+      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 1999353520156687798, guid: d20bd1301bb838a47a4b9415a276b157,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 40
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 1999353520156687798, guid: d20bd1301bb838a47a4b9415a276b157,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 20
+      value: 59.3
       objectReference: {fileID: 0}
     - target: {fileID: 1999353520156687798, guid: d20bd1301bb838a47a4b9415a276b157,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 32
+      value: -63.1
       objectReference: {fileID: 0}
     - target: {fileID: 1999353520156687798, guid: d20bd1301bb838a47a4b9415a276b157,
         type: 3}
@@ -278,6 +278,11 @@ PrefabInstance:
       propertyPath: Camera
       value: 
       objectReference: {fileID: 609735412}
+    - target: {fileID: 1999353520156687796, guid: d20bd1301bb838a47a4b9415a276b157,
+        type: 3}
+      propertyPath: m_UseGravity
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d20bd1301bb838a47a4b9415a276b157, type: 3}
 --- !u!1001 &1928710436
@@ -459,7 +464,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   randomSeed: 0
   worldSeed: 0
-  ChunkDistance: 8
+  ChunkDistance: 16
   chunkSize: 16
   chunkMaxDepth: 4
 --- !u!4 &2015851019

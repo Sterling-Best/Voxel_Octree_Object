@@ -65,6 +65,30 @@ public class Octree_Controller : MonoBehaviour
     
     }
 
+    public void PerlinNoise()
+    {
+        Vector3 offset = this.transform.position;
+        for (long i = 4096; i < (4096 * 2); i++)
+        {
+            Vector3 point = olc.LocToVec3(i);
+            float yr = Mathf.PerlinNoise((offset.x + point.x) * .019f, (offset.z + point.z) * .019f) * 70;
+            //Debug.Log(x + "," + y + "," + z);
+            if (offset.y + point.y < yr)
+            {
+                AddNodeRelPos(point, chunkMaxDepth, 1);
+            }
+            else
+            {
+                AddNodeRelPos(point, chunkMaxDepth, 0);
+            }
+        }
+                    
+
+                
+            
+        
+    }
+
     public void AddNodeAbsPos(Vector3 a_position, byte depth, int type)
     {
         Vector3 position = new Vector3(a_position.x - this.transform.position.x, a_position.y - this.transform.position.y, a_position.z - this.transform.position.z);
@@ -74,7 +98,7 @@ public class Octree_Controller : MonoBehaviour
     public void AddNodeRelPos(Vector3 a_position, byte depth, int type) {
         int depthcoord = (int)this.octreeSize / (int)(Math.Pow(2, depth));
         Vector3 position = new Vector3((int)Math.Floor(a_position.x) / depthcoord, (int)Math.Floor(a_position.y) / depthcoord, (int)Math.Floor(a_position.z) / depthcoord);
-        AddNodeLocID(olc.Vec3ToLoc(position, depth), type);
+        this.octree.Add(olc.Vec3ToLoc(position, depth), type); 
     }
 
     public void AddNodeLocID(long locID, int type)
