@@ -14,12 +14,20 @@ public class OT_LocCode
     //TODO: Allow for depths above 7 to be used.
     public long Vec3ToLoc(Vector3 vec, byte depth)
     {
-        long m = 0;
-        m |= Party1By2(vec.z) | Party1By2(vec.y) << 1 | Party1By2(vec.x) << 2;
-        return (m | Convert.ToInt32(Math.Pow(8, depth)));
+        int m = 0;
+        m = (ushort)(m | Party1By2(vec.z) | Party1By2(vec.y) << 1 | Party1By2(vec.x) << 2);
+        return (long)(m | Convert.ToInt32(Math.Pow(8, depth)));
     }
 
-    //TODO: Documentation: Party1By2(long)
+    private ushort Party1By2(ushort n)
+    {
+        n &= 0x3ff;
+        n = (ushort)((n | n << 16) & 0xff);
+        n = (ushort)((n | n << 8) & 0xf00f);
+        n = (ushort)((n | n << 4) & 0x30C3);
+        return (ushort)((n | n << 2) & 0x9249);
+    }
+
     private long Party1By2(long n)
     {
         n &= 0x000003ff;

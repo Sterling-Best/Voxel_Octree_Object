@@ -96,8 +96,8 @@ public class Octree_Controller : MonoBehaviour
     }
 
     public void AddNodeRelPos(Vector3 a_position, byte depth, int type) {
-        int depthcoord = (int)this.octreeSize / (int)(Math.Pow(2, depth));
-        Vector3 position = new Vector3((int)Math.Floor(a_position.x) / depthcoord, (int)Math.Floor(a_position.y) / depthcoord, (int)Math.Floor(a_position.z) / depthcoord);
+        int depthcoord = (int)(this.octreeSize / (Math.Pow(2, depth)));
+        Vector3 position = new Vector3(Mathf.FloorToInt(a_position.x) / depthcoord, Mathf.FloorToInt(a_position.y) / depthcoord, Mathf.FloorToInt(a_position.z) / depthcoord);
         this.octree.Add(olc.Vec3ToLoc(position, depth), type); 
     }
 
@@ -114,7 +114,8 @@ public class Octree_Controller : MonoBehaviour
 
     public void MergeAllNodes()
     {
-        for (int d = chunkMaxDepth - 1; d >= 0; d--) //Start counting down from max depth
+        bool same;
+        for (byte d = (byte)(chunkMaxDepth - 1); d >= 0; d--) //Start counting down from max depth
         {
             int depthcode = (int)Math.Pow(8, d);
             for (long i = depthcode; i < (depthcode * 2); i++) //Going through each possibility of LocationCode for given depth
@@ -125,7 +126,7 @@ public class Octree_Controller : MonoBehaviour
                 }
                 else
                 {
-                    bool same = true;
+                    same = true;
                     for (byte c = 0; c < 8; c++) //Check through Children
                     {
                         if (octree.ContainsKey((i << 3) | c))
