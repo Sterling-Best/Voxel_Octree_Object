@@ -21,7 +21,7 @@ public class World : MonoBehaviour
     //Awake is called before start - Used for initialization
     private void Awake()
     {
-        //Application.targetFrameRate = -1;
+        Application.targetFrameRate = -1;
         chunk_Manager = new GameObject();
         block_Manager = new Block_Manager();
         ChunkManagerSetUp();

@@ -28,7 +28,17 @@ public class Chunk_Renderer
         Dictionary<long, int> octree = chunk.GetComponent<Octree_Controller>().octree;
         float octreeSize = chunk.GetComponent<Octree_Controller>().octreeSize;
 
+        //Set up Mesh
         octree_mesh.Clear();
+        //Set Up Materials
+        //octree_mesh.subMeshCount = materialdic.Count;
+        //Material[] materiallist = new Material[materialdic.Count];
+        //Collect Materials that belong in this chunk
+        //foreach (int key in materialdic.Keys)
+        //{
+        //    materiallist[materialdic[key]] = chunk.GetComponent<Octree_Controller>().block_Manager.blockMaterialList[key];
+        //}
+        //Check each node in the octree if it should be rendered. 
         byte lengthverts = 18;
         Vector3[] meshverts = new Vector3[octree.Count * lengthverts];
         List<int> facetriangles = new List<int>();
@@ -36,6 +46,10 @@ public class Chunk_Renderer
         
         foreach (int code in octree.Keys)
         {
+            //if (octree.ContainsKey(code << 3) == false)
+            //{
+            //Only Render if node is  (has no children, identified if a key exists with string (current node.locationCode + "000"))
+
                 bool[] sidestorender = { DetermineSideRender(octree, code, olc.CalculateAdjacent(code, axisZ, -1)), DetermineSideRender(octree, code, olc.CalculateAdjacent(code, axisY, 1)), // -z, +y
                      DetermineSideRender(octree, code, olc.CalculateAdjacent(code, axisX, 1)), DetermineSideRender(octree, code, olc.CalculateAdjacent(code, axisX, -1)), // +x, -x
                      DetermineSideRender(octree, code, olc.CalculateAdjacent(code, axisZ, 1)), DetermineSideRender(octree, code, olc.CalculateAdjacent(code, axisY, -1))}; // +z, -y
@@ -145,12 +159,23 @@ public class Chunk_Renderer
                         facetriangles.Add((count * lengthverts) + 16);
                         facetriangles.Add((count * lengthverts) + 17); //b-y t2
                     }
+                    
+                    //octree_mesh.SetTriangles(CombineIntArrays(octree_mesh.GetTriangles(materialdic[octree[code]]), facetriangles.ToArray()), materialdic [octree[code]]);
+                    //octree_mesh.triangles = CombineIntArrays(octree_mesh.triangles, facetriangles);
                     count++;
                 }       
                 else
                 {
                     continue;
                 }
+            //}
+            //else
+            //{
+            //    continue;
+            //}
+            //octree_MeshRender.materials = materiallist.ToArray();
+            
+            
         }
         octree_mesh.vertices = meshverts;
         octree_mesh.triangles = facetriangles.ToArray();
@@ -166,7 +191,7 @@ public class Chunk_Renderer
         {
             return false;
         }
-        else if (adjacent == code) // Adjacent is the same as code if they are at the edge of a chunk, should render.
+        if (adjacent == code) // Adjacent is the same as code if they are at the edge of a chunk, should render.
         {
             return true;
         }
@@ -210,6 +235,61 @@ public class Chunk_Renderer
         return true;
     }
 
+    private Vector3[] CombineVector3Arrays(Vector3[] array1, Vector3[] array2)
+    {
+        Vector3[] array3 = new Vector3[array1.Count() + array2.Count()];
+        array1.CopyTo(array3, 0);
+        array2.CopyTo(array3, array1.Length);
+        return array3;
+    }
+
+
+
+    private Vector2[] CombineVector2Arrays(Vector2[] array1, Vector2[] array2)
+    {
+        Vector2[] array3 = new Vector2[array1.Count() + array2.Count() ];
+        array1.CopyTo(array3, 0);
+        array2.CopyTo(array3, array1.Length);
+        return array3;
+    }
+
+    private int[] CombineIntArrays(int[] array1, int[] array2)
+    {
+        int[] array3 = new int[array1.Count() + array2.Count()];
+        array1.CopyTo(array3, 0);
+        array2.CopyTo(array3, array1.Length);
+        return array3;
+    }
+
+    private string Vector3ArrayList(Vector3[] target)
+    {
+        string vectstr = "";
+        foreach (var vect in target)
+        {
+            vectstr = vectstr + vect + ", ";
+        }
+        return vectstr;
+    }
+
+    private string Vector2ArrayList(Vector2[] target)
+    {
+        string vectstr = "";
+        foreach (var vect in target)
+        {
+            vectstr = vectstr + vect + ", ";
+        }
+        return vectstr;
+    }
+
+    private string IntArrayList(int[] target)
+    {
+        string vectstr = "";
+        foreach (var vect in target)
+        {
+            vectstr = vectstr + vect + ", ";
+        }
+        return vectstr;
+    }
 
     private bool GreedySubAdjacent(Dictionary<long,int> octree, long m, byte axis, byte side, int dir)
     {
@@ -224,6 +304,7 @@ public class Chunk_Renderer
            }
         }
         return false;
+
     }
 
     private int GreedyAdjacent(Dictionary<long, int> octree, long m, byte axis, byte side, int dir)
