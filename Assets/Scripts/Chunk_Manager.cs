@@ -159,16 +159,16 @@ public class Chunk_Manager : MonoBehaviour
 
     public void AddBlock(Vector3 a_pos, int type)
     {
-        Vector3 targetVec3 = new Vector3((float)Math.Floor(a_pos.x / chunkSize) * chunkSize, (float)Math.Floor(a_pos.y / chunkSize) * chunkSize, (float)Math.Floor(a_pos.z / chunkSize) * chunkSize);
+        Vector3Int targetVec3 = new Vector3Int((int)Math.Floor(a_pos.x / chunkSize) * chunkSize, (int)Math.Floor(a_pos.y / chunkSize) * chunkSize, (int)Math.Floor(a_pos.z / chunkSize) * chunkSize);
         Vector3Int targetkey = new Vector3Int((int)targetVec3.x, (int)targetVec3.y, (int)targetVec3.z);
         if (currChunks.ContainsKey(targetkey) == true)
         {
-            currChunks[targetkey].GetComponent<Octree_Controller>().AddNodeAbsPos(a_pos, chunkMaxDepth, type);
+            currChunks[targetkey].GetComponent<Octree_Controller>().AddNodeAbsPos(targetVec3, chunkMaxDepth, type);
         }
         else
         {
             AddChunk(new Vector3((float)Math.Floor(a_pos.x / chunkSize) * chunkSize, (float)Math.Floor(a_pos.y / chunkSize) * chunkSize, (float)Math.Floor(a_pos.z / chunkSize) * chunkSize));
-            currChunks[targetkey].GetComponent<Octree_Controller>().AddNodeAbsPos(a_pos, chunkMaxDepth, type);
+            currChunks[targetkey].GetComponent<Octree_Controller>().AddNodeAbsPos(targetVec3, chunkMaxDepth, type);
         }
     }
 
@@ -219,7 +219,7 @@ public class Chunk_Manager : MonoBehaviour
             
             if ((-limitx / 2) <= x && x <= (limitx / 2) && (-limitz / 2) <= z && z <= (limitz / 2))
             {
-                for (float y = 0; y < 8; y++)
+                for (float y = 0; y < 16; y++)
                 {
 
                     target = new Vector3(playerx + (x*16), y * 16, playerz + (z*16));
@@ -257,25 +257,40 @@ public class Chunk_Manager : MonoBehaviour
         Debug.Log("Start Render");
         //float starttime = Time.time;
         int count = 0;
+        int chunkloadlimit = 3;
+        Debug.Log("Start Time: " + Time.time);
         foreach (KeyValuePair<Vector3Int, GameObject> chunk in loadOrder)
         {
             if (!currChunks.ContainsKey(chunk.Key))
             {
-                chunk.Value.SetActive(true);
-                chunk.Value.GetComponent<Octree_Controller>().PerlinNoise();
-                chunk.Value.GetComponent<Octree_Controller>().MergeAllNodes();
-                chunk_Renderer.DrawChunk(chunk.Value);
-                if (count > 2)
+                if (Time.deltaTime <= .017)
+                {
+                    chunkloadlimit = 3;
+                }
+                else if (Time.deltaTime <= .034)
+                {
+                    chunkloadlimit = 2;
+                }
+                else
+                {
+                    chunkloadlimit = 2;
+                }
+                if (count > chunkloadlimit)
                 {
                     count = 0;
                     yield return 0;
                 }
+                chunk.Value.SetActive(true);
+                chunk.Value.GetComponent<Octree_Controller>().PerlinNoise();
+                chunk.Value.GetComponent<Octree_Controller>().MergeAllNodes();
+                chunk_Renderer.DrawChunk(chunk.Value);
                 count++;
                 currChunks.Add(chunk.Key, chunk.Value);
             }
             
         }
         loadOrder.Clear();
+        Debug.Log("End Time: " + Time.time);
         yield return null;
     }
 

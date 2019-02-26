@@ -12,15 +12,24 @@ public class OT_LocCode
 
     //TODO: Documentation: Vec3ToLoc
     //TODO: Allow for depths above 7 to be used.
-    public long Vec3ToLoc(Vector3 vec, byte depth)
+    public ushort Vec3ToLoc(Vector3Int vec, byte depth)
     {
-        long m = 0;
+        int m = 0;
         m |= Party1By2(vec.z) | Party1By2(vec.y) << 1 | Party1By2(vec.x) << 2;
-        return (m | Convert.ToInt32(Math.Pow(8, depth)));
+        return (ushort)(m | (int)(Math.Pow(8, depth)));
     }
 
     //TODO: Documentation: Party1By2(long)
-    private long Party1By2(long n)
+    private int Party1By2(int n)
+    {
+        n &= 0x3ff;
+        n = (n | n << 16) & 0xff;
+        n = (n | n << 8) & 0xf00f00f;
+        n = (n | n << 4) & 0x30c30c3;
+        return (n | n << 2) & 0x9249249;
+    }
+
+    private long Party1By2long(long n)
     {
         n &= 0x000003ff;
         n = (n | n << 16) & 0x1f0000ff0000ff;
@@ -29,7 +38,7 @@ public class OT_LocCode
         return (n | n << 2) & 0x1249249249249249;
     }
 
-    public long Party1By2(float a)
+    public long Party1By2float(float a)
     {
         return Party1By2(Convert.ToInt32(a));
     }
@@ -37,25 +46,21 @@ public class OT_LocCode
     //Decoding Morton Code
 
     //TODO: Finish LocToVec3() Documentation
-    public Vector3 LocToVec3(long m)
+    public Vector3Int LocToVec3(int m)
     {
-        Vector3 vec = new Vector3(0, 0, 0);
         int depthmodifier = (Convert.ToInt32(Math.Pow(8, Convert.ToInt32(Math.Log(m, 8)))));
         m = (m ^ depthmodifier);
-        vec.z = Collapseby2(m);
-        vec.y = Collapseby2(m >> 1);
-        vec.x = Collapseby2(m >> 2);
-        return vec;
+        return new Vector3Int(Collapseby2(m >> 2), Collapseby2(m >> 1), Collapseby2(m));
     }
 
     //TODO: Finish collapseby2() Documentation
-    private long Collapseby2(long n)
+    private int Collapseby2(int n)
     {
-        n &= 0x1249249249249249;
-        n = (n ^ (n >> 2)) & 0x10c30c30c30c30c3;
-        n = (n ^ (n >> 4)) & 0x100f00f00f00f00f;
-        n = (n ^ (n >> 8)) & 0x1f0000ff0000ff;
-        return (n ^ (n >> 16)) & 0x1f00000000ffff;
+        n &= 0x49249249;
+        n = (n ^ (n >> 2)) & 0x30c30c3;
+        n = (n ^ (n >> 4)) & 0xf00f00f;
+        n = (n ^ (n >> 8)) & 0xff;
+        return (n ^ (n >> 16)) & 0xffff;
     }
 
     //--Searches--// 
@@ -75,13 +80,13 @@ public class OT_LocCode
     /// <remarks>
     /// 
     /// </remarks>
-    public long CalculateAdjacent(long m, byte axis, int distance)
+    public ushort CalculateAdjacent(int m, byte axis, int distance)
     {
         byte depth = CalculateDepth(m);
         int depthmodifier = (Convert.ToInt32(Math.Pow(8, depth)));
-        long[] axismask = { 0x6DB6DB6DB6DB6DB6, 0x5B6DB6DB6DB6DB6D, 0x36DB6DB6DB6DB6DB };
+        int[] axismask = { 0x6DB6DB6, 0x6DB6DB6D, 0xB6DB6DB };
         m = (m ^ depthmodifier);
-        long n = Collapseby2(m >> axis);
+        int n = Collapseby2(m >> axis);
         if (WithinOctreeCheckInt(n + distance, depth))
         {
             if (distance >= 0)
@@ -94,41 +99,41 @@ public class OT_LocCode
             }
         }
         m = (m | depthmodifier);
-        return m;
+        return (ushort)m;
     }
 
     //Offset Search
     //TODO: Documentation: CalculateOffset() 
     //TODO: UnitTests: CalculateOffest() 
-    public long CalculateOffset(long m, Vector3 offset)
+    public ushort CalculateOffset(int m, Vector3Int offset)
     {
         //TODO: Optimization: Look into similar set-up to CalculateAdjacent() to reduce operations (unpacking/packing).
         byte depth = CalculateDepth(m);
-        Vector3 mvec = LocToVec3(m) + offset;
+        Vector3Int mvec = LocToVec3(m) + offset;
         if (WithinOctreeCheckVec3(mvec, depth))
         {
             m = Vec3ToLoc(mvec, depth);
         }
-        return m;
+        return (ushort)m;
     }
 
     //Parent Search
     //Calculate Parent
     //TODO: Documentation: CalculateParent()
-    public long CalculateParent(long m)
+    public ushort CalculateParent(ushort m)
     {
-        return m = (m >> 3);
+        return m = (ushort)(m >> 3);
     }
 
     //Parents Search
     //TODO: Documentation: CollectParents()
-    public Array CollectParents(long m)
+    public Array CollectParents(ushort m)
     {
         byte depth = CalculateDepth(m);
-        List<long> parentlist = new List<long>();
+        List<ushort> parentlist = new List<ushort>();
         for (int i = 1; i < depth; ++i)
         {
-            parentlist.Add(m >> 3 * i);
+            parentlist.Add((ushort)(m >> 3 * i));
         }
         Array array = parentlist.ToArray();
         return array;

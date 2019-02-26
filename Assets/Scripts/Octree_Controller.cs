@@ -15,11 +15,10 @@ public class Octree_Controller : MonoBehaviour
 {
 
     
-    public Dictionary<long, int> octree = new Dictionary<long
-        , int>(); //<, int> = <locID, blocktype>
+    public Dictionary<ushort, int> octree = new Dictionary<ushort, int>(); //<, int> = <locID, blocktype>
 
 
-    public Dictionary<int, int> materialdic = new Dictionary<int, int>(); //<int, int> = <materialID, materialIndexinChunk>
+    public Dictionary<ushort, int> materialdic = new Dictionary<ushort, int>(); //<int, int> = <materialID, materialIndexinChunk>
 
     public float octreeSize;
 
@@ -68,11 +67,10 @@ public class Octree_Controller : MonoBehaviour
     public void PerlinNoise()
     {
         Vector3 offset = this.transform.position;
-        for (long i = 4096; i < (4096 * 2); i++)
+        for (ushort i = 4096; i < (4096 * 2); i++)
         {
-            Vector3 point = olc.LocToVec3(i);
-            float yr = Mathf.PerlinNoise((offset.x + point.x) * .019f, (offset.z + point.z) * .019f) * 70;
-            //Debug.Log(x + "," + y + "," + z);
+            Vector3Int point = olc.LocToVec3(i);
+            float yr = Mathf.PerlinNoise((offset.x + point.x) * .019f, (offset.z + point.z) * .019f) * 70 + 90;
             if (offset.y + point.y < yr)
             {
                 AddNodeRelPos(point, chunkMaxDepth, 1);
@@ -82,42 +80,32 @@ public class Octree_Controller : MonoBehaviour
                 AddNodeRelPos(point, chunkMaxDepth, 0);
             }
         }
-                    
-
-                
-            
-        
     }
 
-    public void AddNodeAbsPos(Vector3 a_position, byte depth, int type)
+    public void AddNodeAbsPos(Vector3Int a_position, byte depth, int type)
     {
-        Vector3 position = new Vector3(a_position.x - this.transform.position.x, a_position.y - this.transform.position.y, a_position.z - this.transform.position.z);
-        AddNodeRelPos(position, depth, type);
+        //Vector3Int position = new Vector3Int(Mathf(a_position.x - this.transform.position.x), a_position.y - this.transform.position.y, a_position.z - this.transform.position.z);
+        //AddNodeRelPos(position, depth, type);
     }
 
-    public void AddNodeRelPos(Vector3 a_position, byte depth, int type) {
-        int depthcoord = (int)this.octreeSize / (int)(Math.Pow(2, depth));
-        Vector3 position = new Vector3((int)Math.Floor(a_position.x) / depthcoord, (int)Math.Floor(a_position.y) / depthcoord, (int)Math.Floor(a_position.z) / depthcoord);
+    public void AddNodeRelPos(Vector3Int a_position, byte depth, int type) {
+        byte depthcoord = (byte)(this.octreeSize / Math.Pow(2, depth));
+        Vector3Int position = new Vector3Int(a_position.x / depthcoord, a_position.y / depthcoord, a_position.z / depthcoord);
         this.octree.Add(olc.Vec3ToLoc(position, depth), type); 
     }
 
-    public void AddNodeLocID(long locID, int type)
+    public void AddNodeLocID(ushort locID, int type)
     {
-        
-        //if (!materialdic.ContainsKey(type))
-        //{
-        //    this.materialdic.Add(type, this.materialdic.Count);
-        //}
         this.octree.Add(locID, type);
-        
     }
 
     public void MergeAllNodes()
     {
+        bool same;
         for (int d = chunkMaxDepth - 1; d >= 0; d--) //Start counting down from max depth
         {
-            int depthcode = (int)Math.Pow(8, d);
-            for (long i = depthcode; i < (depthcode * 2); i++) //Going through each possibility of LocationCode for given depth
+            ushort depthcode = (ushort)Math.Pow(8, d);
+            for (ushort i = depthcode; i < (depthcode * 2); i++) //Going through each possibility of LocationCode for given depth
             {
                 if (octree.ContainsKey(i))
                 {
@@ -125,12 +113,12 @@ public class Octree_Controller : MonoBehaviour
                 }
                 else
                 {
-                    bool same = true;
+                    same = true;
                     for (byte c = 0; c < 8; c++) //Check through Children
                     {
-                        if (octree.ContainsKey((i << 3) | c))
+                        if (octree.ContainsKey((ushort)((i << 3) | c)))
                         {
-                            if (octree[(i << 3) | c] != octree[i << 3]) //If child key exists and its not the same as sibling
+                            if (octree[((ushort)((i << 3) | c))] != octree[(ushort)(i << 3)]) //If child key exists and its not the same as sibling
                             {
                                 same = false;
                                 break;
@@ -144,10 +132,10 @@ public class Octree_Controller : MonoBehaviour
                     }
                     if (same == true)
                     {
-                        octree.Add(i, octree[i << 3]);
+                        octree.Add(i, octree[(ushort)(i << 3)]);
                         for (byte c = 0; c < 8; c++) //Check through Children
                         {
-                            octree.Remove((i << 3) | c);
+                            octree.Remove((ushort)((i << 3) | c));
                         }
                     }
                 }
