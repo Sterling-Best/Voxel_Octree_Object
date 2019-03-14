@@ -72,42 +72,26 @@ public class Chunk_Manager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        chunkloader();
-        StartRender();
-
-
-
-        //for (int y = 0; y < 16; y++)
-        //{
-        //    for (int x = 0; x < 16; x++)
-        //    {
-        //        for (int z = 0; z < 16; z++)
-        //        {
-        //            AddChunk(new Vector3(x * 16, y * 16, z * 16));
-
-        //        }
-        //    }
-        //}
+        //chunkloader();
+        //StartRender();
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         playerposition = player.transform.position;
-        if (Vector3.Distance(playerposition, playeroldpos) > 16 && rendering == false)
+        if (Vector3.Distance(playerposition, playeroldpos) > 16 && rendering == false && loading == false)
         {
-            loading = true;
-            Debug.Log("Collecting Chunk Area");
             chunkloader();
             playeroldpos = new Vector3(playerposition.x, playerposition.y, playerposition.z);
-
+            loading = true;
         }
-        if (loadOrder.Count > 0 && rendering == false && loading == true)
+        else if (rendering == false && loading == true)
         {
             rendering = true;
             StartCoroutine("RenderLoaded");
         }
-        if(loadOrder.Count == 0)
+        else if(loadOrder.Count == 0 && rendering == true && loading == true)
         {
             StopCoroutine("RenderLoaded");
             rendering = false;
@@ -127,7 +111,9 @@ public class Chunk_Manager : MonoBehaviour
         defaultChunk = (GameObject)Instantiate(Resources.Load("Prefabs/defaultChunk"));
         chunkSize = a_chunksize;
         chunkMaxDepth = a_chunkmaxdepth;
-        chunkNumLimit = (int)Math.Pow((a_chunkdistance * 2), 3);
+        Debug.Log("Chunk Distance: " + a_chunkdistance);
+        chunkNumLimit = (int)Math.Pow((a_chunkdistance), 3);
+        Debug.Log("Chunk Count Limit: " + chunkNumLimit);
         defaultChunk.GetComponent<Octree_Controller>().octreeSize = chunkSize;
         defaultChunk.GetComponent<Octree_Controller>().chunkMaxDepth = chunkMaxDepth;
         defaultChunk.GetComponent<Octree_Controller>().chunk_Renderer = chunk_Renderer;
@@ -145,15 +131,14 @@ public class Chunk_Manager : MonoBehaviour
         //Set Block Manager
     }
 
-    private void AddChunk(Vector3 a_pos)
+    private void AddChunk(Vector3Int a_pos)
     {
         if (chunkPool.Count > 0)
         {
-            Vector3Int target3int = new Vector3Int((int)a_pos.x, (int)a_pos.y, (int)a_pos.z);
             GameObject chunk = chunkPool.Dequeue();
             chunk.SetActive(true);
             chunk.transform.position = a_pos;
-            loadOrder.Enqueue(new KeyValuePair<Vector3Int, GameObject>(target3int, chunk));
+            loadOrder.Enqueue(new KeyValuePair<Vector3Int, GameObject>(a_pos, chunk));
         }
     }
 
@@ -167,7 +152,7 @@ public class Chunk_Manager : MonoBehaviour
         }
         else
         {
-            AddChunk(new Vector3((float)Math.Floor(a_pos.x / chunkSize) * chunkSize, (float)Math.Floor(a_pos.y / chunkSize) * chunkSize, (float)Math.Floor(a_pos.z / chunkSize) * chunkSize));
+            AddChunk(new Vector3Int((int)Math.Floor(a_pos.x / chunkSize) * chunkSize, (int)Math.Floor(a_pos.y / chunkSize) * chunkSize, (int)Math.Floor(a_pos.z / chunkSize) * chunkSize));
             currChunks[targetkey].GetComponent<Octree_Controller>().AddNodeAbsPos(targetVec3, chunkMaxDepth, type);
         }
     }
@@ -176,24 +161,30 @@ public class Chunk_Manager : MonoBehaviour
     {
         GameObject playerload = GameObject.Find("Player");
         Vector3 playerloc = playerload.transform.position;
-        Debug.Log(playerloc);
+        Debug.Log("Player Location: " + playerloc);
         float playerx = Mathf.FloorToInt(playerloc.x / chunkSize) * chunkSize - 16;
         float playerz = Mathf.FloorToInt(playerloc.z / chunkSize) * chunkSize - 16;
+        Debug.Log("PlayerX: " + playerx);
+        Debug.Log("PlayerZ: " + playerz);
         float x = 0;
         float z = 0;
         float limitx = 16;
         float limitz = 16;
         float maxX = limitx * chunkSize;
         float maxZ = limitz * chunkSize;
+        Debug.Log("MinX: " + (playerx - (maxX / 2)));
+        Debug.Log("MaxX: " + (playerx + (maxX / 2)));
+        Debug.Log("MinZ: " + (playerz - (maxZ / 2)));
+        Debug.Log("MaxZ: " + (playerz + (maxZ / 2)));
         float dx = 0;
         float dz = -1;
         //Remove Chunks outside parameters
-        Vector3 target = new Vector3(playerx + (x * chunkSize), 0, playerz + (z * chunkSize));
+        
         List<Vector3Int> remove = new List<Vector3Int>();
         foreach (KeyValuePair<Vector3Int, GameObject> chunk in currChunks)
         {
             Vector3 chunkloc = chunk.Value.transform.position;
-            if (chunkloc.x < playerx - (maxX / 2) || chunkloc.x >= playerloc.x + (maxX / 2) || chunkloc.z < playerloc.z - (maxZ / 2)  || chunkloc.z >= playerz + (maxZ / 2))
+            if (chunkloc.x < playerx - (maxX / 2) || chunkloc.x >= playerx + (maxX / 2) || chunkloc.z < playerz - (maxZ / 2)  || chunkloc.z >= playerz + (maxZ / 2))
             {
                 //Debug.Log("Remove: " + chunk.Key);
                 remove.Add(chunk.Key);
@@ -208,26 +199,16 @@ public class Chunk_Manager : MonoBehaviour
             currChunks.Remove(chunk);
         }
         remove.Clear();
-        //Debug.Log("Player Location: " + playerload.transform.position);
-        //Debug.Log("Adjusted Location: " + playerx + ", " + playerz);
-        //Debug.Log("Chunks Limit x-: " + (playerx - (maxX / 2)));
-        //Debug.Log("Chunks Limit x+: " + (playerx + (maxX / 2)));
-        //Debug.Log("Chunks Limit z-: " + (playerz - (maxZ / 2)));
-        //Debug.Log("Chunks Limit z+: " + (playerz + (maxZ / 2)));
+        Vector3Int target;
         for (int i = 0; i < 16*16; i++)
         {
-            
-            if ((-limitx / 2) <= x && x <= (limitx / 2) && (-limitz / 2) <= z && z <= (limitz / 2))
+            if (-(limitx / 2) <= x && x < (limitx / 2) && -(limitz / 2) <= z && z < (limitz / 2) )
             {
                 for (float y = 0; y < 16; y++)
                 {
 
-                    target = new Vector3(playerx + (x*16), y * 16, playerz + (z*16));
-                    //Debug.Log("X: " + x + "," + " Z: " + z);
-                    //Debug.Log("Player X: " + playerx + "," + " Player Z: " + playerz);
-                    //Debug.Log("Modified Coordinates: " + target);
-                    //Debug.Log("LoadOrder Count: " + loadOrder.Count);
-                    if (!currChunks.ContainsKey(new Vector3Int((int)target.x, (int)target.y, (int)target.z)))
+                    target = new Vector3Int((int)(playerx + (x * chunkSize)), (int)(y * chunkSize), (int)(playerz + (z * chunkSize)));
+                    if (!currChunks.ContainsKey(target))
                     {
                         AddChunk(target);
                     }
@@ -244,6 +225,7 @@ public class Chunk_Manager : MonoBehaviour
         }
         Debug.Log("chunkPool Count: " + chunkPool.Count);
         Debug.Log("LoadOrder Count: " + loadOrder.Count);
+        
     }
 
     public void StartRender()
@@ -290,6 +272,7 @@ public class Chunk_Manager : MonoBehaviour
             
         }
         loadOrder.Clear();
+        Debug.Log("currChunks Count: " + currChunks.Count);
         Debug.Log("End Time: " + Time.time);
         yield return null;
     }

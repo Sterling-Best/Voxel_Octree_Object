@@ -9,7 +9,7 @@ public class World : MonoBehaviour
     public bool randomSeed = false;
     public int worldSeed;
 
-    public int ChunkDistance = 4;
+    public int ChunkDistance = 8;
 
     public int chunkSize = 16;
     public byte chunkMaxDepth = 4;
@@ -17,6 +17,8 @@ public class World : MonoBehaviour
     GameObject chunk_Manager;
 
     private Block_Manager block_Manager;
+
+    bool rendering = false;
 
     //Awake is called before start - Used for initialization
     private void Awake()
@@ -34,15 +36,15 @@ public class World : MonoBehaviour
         
     }
 
-    bool startrendering = true;
+    
 
     // Update is called once per frame
     void Update()
     {
-        if (startrendering == true){
-            startrendering = false;
-            chunk_Manager.GetComponent<Chunk_Manager>().StartRender();
-        }
+        //if (rendering == false){
+        //    rendering = true;
+        //    chunk_Manager.GetComponent<Chunk_Manager>().StartRender();
+        //}
     }
 
 
