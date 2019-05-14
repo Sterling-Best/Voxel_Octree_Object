@@ -51,22 +51,10 @@ public class Octree_Controller : MonoBehaviour
         this.octreelimitpos = octreepos + new Vector3(octreeSize, octreeSize, octreeSize);
     }
 
-        // Use this for initialization
-        void Start()
-    {
-    }
-
-
-
-    // Update is called once per frame
-    void Update()
-    {
-    
-    }
-
     public void PerlinNoise()
     {
         Vector3 offset = this.transform.position;
+
         for (ushort i = 4096; i < (4096 * 2); i++)
         {
             Vector3Int point = olc.LocToVec3(i);
@@ -86,7 +74,7 @@ public class Octree_Controller : MonoBehaviour
     {
         //Vector3Int position = new Vector3Int(Mathf(a_position.x - this.transform.position.x), a_position.y - this.transform.position.y, a_position.z - this.transform.position.z);
         //AddNodeRelPos(position, depth, type);
-    }
+}
 
     public void AddNodeRelPos(Vector3Int a_position, byte depth, int type) {
         byte depthcoord = (byte)(this.octreeSize / Math.Pow(2, depth));
@@ -101,48 +89,42 @@ public class Octree_Controller : MonoBehaviour
 
     public void MergeAllNodes()
     {
-        bool same;
-        for (int d = chunkMaxDepth - 1; d >= 0; d--) //Start counting down from max depth
+        bool containssibling;
+        ushort child8;
+        for (int d = chunkMaxDepth - 1; d >= 0; d--) //Start counting down from Parents of Max Depth.
         {
             ushort depthcode = (ushort)Math.Pow(8, d);
             for (ushort i = depthcode; i < (depthcode * 2); i++) //Going through each possibility of LocationCode for given depth
             {
-                if (octree.ContainsKey(i))
+                if (!octree.ContainsKey(i)) //If Parent already exists, Don't
                 {
-                    break;
-                }
-                else
-                {
-                    same = true;
-                    for (byte c = 0; c < 8; c++) //Check through Children
+                    ushort ichild = (ushort)(i << 3);
+                    if (octree.ContainsKey(ichild)) //Because of octree only need to check the first child
                     {
-                        if (octree.ContainsKey((ushort)((i << 3) | c)))
+                        child8 = (ushort)(ichild + 8);
+                        for (ushort c = (ushort)(ichild + 1); c < child8; c++) //Check through each sibling of 000, 1-7
                         {
-                            if (octree[((ushort)((i << 3) | c))] != octree[(ushort)(i << 3)]) //If child key exists and its not the same as sibling
+                            containssibling = octree.ContainsKey(c);
+                            if (!containssibling || (containssibling && octree[c] != octree[ichild]))
                             {
-                                same = false;
-                                break;
+                                    goto NextiCode;
                             }
                         }
-                        else
+                        octree.Add(i, octree[ichild]);
+                        for (ushort c = ichild; c < child8; c++) //Remove Each Child
                         {
-                            same = false;
-                            break;
+                            octree.Remove(c);
                         }
-                    }
-                    if (same == true)
-                    {
-                        octree.Add(i, octree[(ushort)(i << 3)]);
-                        for (byte c = 0; c < 8; c++) //Check through Children
-                        {
-                            octree.Remove((ushort)((i << 3) | c));
-                        }
-                    }
+                        
+                    }   
                 }
+                NextiCode: continue;
+
             }
         }
     }
 }
+
 
 
 

@@ -4,6 +4,131 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+
+/// <summary>
+/// Location Codes are a compressed form of 3D octant (voxels), based on a modified version of Morton Codes. 
+/// 
+/// Octree
+/// ------------
+/// Octree is a datastructure where each parent node must have 8 children.
+/// When dealing with 3D space an octree is used to split each regions into 8 Octants, of equal size. 
+/// 
+/// Morton Codes
+/// ------------
+/// Using Octree format every 3 bit indicates positional region at a certain depth.  
+/// Each bit represents a binary shift on the given axis. First bit (from left to right) is X axis, second is Y axis, and Third is Z axis. 
+/// 
+/// A binary Shift along the xaxis for morton codes  would look like this
+/// 
+/// --------------
+/// | 000 |  100 |
+/// |  0  |   4  |
+/// --------------
+/// 
+/// Bit Code 000 = Morton Code 0 = Bottom Corner closest to origin
+/// Bit Code 111 = Morton Code 7 = Upper Corner farthest from origin
+/// 
+/// 0 (x axis) + 0 (y axis) + 0 (z axis) = 0
+/// 0 (x axis) + 1 (y axis) + 0 (z axis) = 2
+/// 1 (x axis) + 0 (y axis) + 0 (z axis) = 4 
+/// 1 (x axis) + 1 (y axis) + 0 (z axis) = 6
+/// 1 (x axis) + 1 (y axis) + 1 (z axis) = 7
+/// 
+/// Note: Examples illustrated will be a quadtree or 2D slice of an octree for simplicity.
+/// Top Binary,
+/// 
+/// --------------
+/// | 010 |  110 |
+/// |  2  |   6  |
+/// |------------|
+/// | 000 |  100 |
+/// |  0  |   4  |
+/// --------------
+/// 
+/// Adding the 3-bit codes together specifies a octant within one of the larger octants.
+/// Bit Code (Depth 1) 000 + Depth (2) 010 = Morton Code 000010 -> 2
+/// 
+/// -------------------------------------
+/// | 010010 | 010110 | 110010 | 110110 |
+/// |   18   |   22   |   50   |   54   |
+/// |-----------------|-----------------|
+/// | 010000 | 010100 | 110000 | 110100 |
+/// |   16   |   20   |   48   |   52   |
+/// |-----------------------------------|
+/// | 000010 | 000110 | 100010 | 100110 |
+/// |    2   |    6   |   34   |   38   |
+/// |-----------------|-----------------|
+/// | 000000 | 000100 | 100000 | 100100 |
+/// |    0   |    4   |   32   |   36   |
+/// -------------------------------------
+///
+/// Then having codes for various sized octants within the same octree
+/// 
+/// -------------------------------------
+/// | 010010 | 010110 |                 |
+/// |   18   |   22   |      110        |
+/// |-----------------|       6         |
+/// | 010000 | 010100 |                 |
+/// |   16   |   20   |                 |
+/// |-----------------------------------|
+/// |                 | 100010 | 100110 |
+/// |       000       |   34   |   38   |
+/// |        0        |-----------------|
+/// |                 | 100000 | 100100 |
+/// |                 |   32   |   36   |
+/// -------------------------------------
+/// 
+/// However this does create some conflict when dealing with an octree with nodes of various sizes.
+/// 000 and 000000 both being 0 even though they are technically different regions. 
+/// So adding an extra bit indicating depth/size is required
+///
+/// Depth Value Bits
+/// -----------------
+/// 
+/// Added on to the End of the Morton Code, 
+/// modifying values to differentiate nodes of difference size within similar spaces that
+/// have similar location code values.
+/// Issues: 000 and 000000 both have a location code of 0 even though the represent codes of different sizes.
+///
+/// Depth 1 + Morton Code 000 = Bit Code 1000 = 8
+/// 
+/// -----------------------------------------
+/// | 1010010 | 1010110 |                   |
+/// |   82    |   86    |      1110         |
+/// |-------------------|       14          | 
+/// | 1010000 | 1010100 |                   |
+/// |   80    |   84    |                   |
+/// |---------------------------------------|
+/// |                   | 1100010 | 1100110 |
+/// |      1000         |   98    |   102   |
+/// |        8          |-------------------|
+/// |                   | 1100000 | 1100100 |
+/// |                   |    96   |   100   |
+/// -----------------------------------------
+/// 
+/// Codes
+/// -----------------
+/// 
+/// --ushort Supported--
+/// Total Codes: 37,449 -- Depths: 0-5
+/// Codes 1 -> Depth 0
+/// Codes 8 to 15 -> Depth 1
+/// Codes 64 to 127 -> Depth 2
+/// Codes 512 to 1,023 -> Depth 3
+/// Codes 4,096 to 8,191 -> Depth 4
+/// Codes 32,768 to 65,535 -> Depth 5
+/// --int or uint supported-- (includes ushort code values)
+/// Total Codes: 1,227,096,064 -- Depths: 0-10
+/// Codes 262,144 to 524,287 -> Depth 6
+/// Codes 2,097,152 to 4,194,303 -> Depth 7
+/// Codes 16,777,216 to 33,554,431 -> Depth 8
+/// Codes 134,217,728 to 268,435,455 -> Depth 9
+/// Codes 1,073,741,824 to 2,147,483,647 -> Depth 10
+/// --long supported-- (includes ushort and int code values)
+/// Codes ‭8,589,934,592‬ to 17,179,869,183 -> Detph 11
+/// etc....
+/// 
+/// </summary>
 public class OT_LocCode
 {
     //--Encoding/Decoding--//
@@ -12,14 +137,20 @@ public class OT_LocCode
 
     //TODO: Documentation: Vec3ToLoc
     //TODO: Allow for depths above 7 to be used.
+
+    
+    /// <param name="vec"></param>
+    /// <param name="depth"></param>
+    /// <returns>Returns the 16-bit Location code, dirived from Vector 3 coordinates</returns>
+    /// <remarks>
+    /// 
+    /// </remarks>
     public ushort Vec3ToLoc(Vector3Int vec, byte depth)
     {
-        int m = 0;
-        m |= Party1By2(vec.z) | Party1By2(vec.y) << 1 | Party1By2(vec.x) << 2;
+        int m = Party1By2(vec.z) | Party1By2(vec.y) << 1 | Party1By2(vec.x) << 2;
         return (ushort)(m | (int)(Math.Pow(8, depth)));
     }
 
-    //TODO: Documentation: Party1By2(long)
     private int Party1By2(int n)
     {
         n &= 0x3ff;
@@ -29,6 +160,7 @@ public class OT_LocCode
         return (n | n << 2) & 0x9249249;
     }
 
+    //TODO: Documentation: Party1By2long(long)
     private long Party1By2long(long n)
     {
         n &= 0x000003ff;
@@ -197,10 +329,7 @@ public class OT_LocCode
         {
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
     //TODO: Documentation: WithinOctreeVec3()
@@ -211,10 +340,7 @@ public class OT_LocCode
         {
             return true;
         }
-        else
-        {
-            return false;
-        }
+        return false;
     }
 
     public long CalculateOppositEdge(long n)
