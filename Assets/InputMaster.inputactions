@@ -1,0 +1,50 @@
+{
+    "name": "InputMaster",
+    "maps": [
+        {
+            "name": "Debug",
+            "id": "4e2663e4-9e72-433a-b00d-f234b38f81d2",
+            "actions": [
+                {
+                    "name": "ChunkDebugActivate",
+                    "type": "Button",
+                    "id": "04ecada1-68b7-41c8-8e06-3e54d2637d9c",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "5bddf250-46a5-4078-a4f0-665767d5f6df",
+                    "path": "<Keyboard>/#(T)",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard and Mouse",
+                    "action": "ChunkDebugActivate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "Keyboard and Mouse",
+            "bindingGroup": "Keyboard and Mouse",
+            "devices": [
+                {
+                    "devicePath": "<Keyboard>",
+                    "isOptional": false,
+                    "isOR": false
+                },
+                {
+                    "devicePath": "<Mouse>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        }
+    ]
+}

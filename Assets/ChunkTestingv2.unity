@@ -728,7 +728,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cb686db96b585c49a8270f7aa432898, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  displayText: {fileID: 311587600}
+  ChunkDebugPan: {fileID: 1000520067}
 --- !u!1 &1000520067
 GameObject:
   m_ObjectHideFlags: 0

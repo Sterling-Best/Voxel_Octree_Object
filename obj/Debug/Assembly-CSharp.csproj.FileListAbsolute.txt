@@ -175,3 +175,4 @@ C:\Users\methl\Documents\Serfs\Voxel_Octree_Object\obj\Debug\Assembly-CSharp.csp
 C:\Users\methl\Documents\Serfs\Voxel_Octree_Object\obj\Debug\Assembly-CSharp.csproj.CopyComplete
 C:\Users\methl\Documents\Serfs\Voxel_Octree_Object\obj\Debug\Assembly-CSharp.dll
 C:\Users\methl\Documents\Serfs\Voxel_Octree_Object\obj\Debug\Assembly-CSharp.pdb
+C:\Users\Methlodis\Documents\GitHub\Voxel_Octree_Object\obj\Debug\Assembly-CSharp.csprojAssemblyReference.cache
