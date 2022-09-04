@@ -138,22 +138,17 @@ public class OT_LocCode
     //TODO: Documentation: Vec3ToLoc
     //TODO: Allow for depths above 7 to be used.
 
-
-    //Delcartion of Class Variables
-    private Dictionary<char, int> axisMasks = new Dictionary<char, int>() { { 'x', 0xB6DB6DB }, { 'y', 0x6DB6DB6D }, { 'z', 0x6DB6DB6 } };
-    private Dictionary<char, byte> axisCodes = new Dictionary<char, byte>() { { 'x', 2 }, { 'y', 1 }, { 'z', 0 } };
-
-
-    /// <param name="vec3"></param>
+    
+    /// <param name="vec"></param>
     /// <param name="depth"></param>
     /// <returns>Returns the 16-bit Location code, dirived from Vector 3 coordinates</returns>
     /// <remarks>
     /// 
     /// </remarks>
-    public ushort Vec3ToLoc(Vector3Int vec3, byte depth)
+    public ushort Vec3ToLoc(Vector3Int vec, byte depth)
     {
-        int mortonCode = Party1By2(vec3.z) | Party1By2(vec3.y) << 1 | Party1By2(vec3.x) << 2;
-        return (ushort)(mortonCode | (int)(Math.Pow(8, depth)));
+        int m = Party1By2(vec.z) | Party1By2(vec.y) << 1 | Party1By2(vec.x) << 2;
+        return (ushort)(m | (int)(Math.Pow(8, depth)));
     }
 
     private int Party1By2(int n)
@@ -217,26 +212,26 @@ public class OT_LocCode
     /// <remarks>
     /// 
     /// </remarks>
-    public ushort CalculateAdjacent(int m, char axis, int distance)
+    public ushort CalculateAdjacent(int m, byte axis, int distance)
     {
-        byte axisCode = axisCodes[axis];
         byte depth = CalculateDepth(m);
         int depthmodifier = (Convert.ToInt32(Math.Pow(8, depth)));
+        int[] axismask = { 0x6DB6DB6, 0x6DB6DB6D, 0xB6DB6DB };
         m = (m ^ depthmodifier);
-        int n = Collapseby2(m >> axisCode);
+        int n = Collapseby2(m >> axis);
         if (WithinOctreeCheckInt(n + distance, depth))
         {
             if (distance >= 0)
             {
                 // TODO: Optimization: Possible optimization in injecting (n + distance) value back into m
-                m = (m & (axisMasks[axis])) | (Party1By2(n + distance) << axisCode);
+                m = (m & (axismask[axis])) | (Party1By2(n + distance) << axis);
             } else
             {
-                m = (m & (axisMasks[axis])) ^ (Party1By2(n + distance) << axisCode);
+                m = (m & (axismask[axis])) ^ (Party1By2(n + distance) << axis);
             }
         }
-        //m = (m | depthmodifier);
-        return (ushort)(m | depthmodifier);
+        m = (m | depthmodifier);
+        return (ushort)m;
     }
 
     //Offset Search
