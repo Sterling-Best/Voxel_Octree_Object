@@ -182,7 +182,7 @@ public class OT_LocCode
     {
         int depthModifier = (Convert.ToInt32(Math.Pow(8, Convert.ToInt32(Math.Log(locationCode, 8)))));
         locationCode = (locationCode ^ depthModifier);
-        return new Vector3Int(Collapseby2(mortonCode >> 2), Collapseby2(mortonCode >> 1), Collapseby2(mortonCode));
+        return new Vector3Int(Collapseby2(locationCode >> 2), Collapseby2(locationCode >> 1), Collapseby2(locationCode));
     }
 
     //TODO: Finish collapseby2() Documentation
