@@ -309,7 +309,12 @@ public class OT_LocCode
     {
         return Convert.ToByte(Math.Log(m, 8));
     }
-    
+
+    public ushort generateDepthCode(int depth)
+    {
+        return (ushort)Math.Pow(8, depth);
+    }
+
     //Calculate Child Check
     //TODO: Documentation: CalculateChildCheck()
 

@@ -34,10 +34,15 @@ public class Chunk_Renderer
         Vector3[] meshverts = new Vector3[octree.Count * lengthverts];
         List<int> facetriangles = new List<int>();
         int count = 0;
-        
+        if (octree.Keys.Count == 1) 
+        {
+            if !(block_Manager.blocklist[octree[1]].opaque)
+            {
+                return;
+            }
+        }
         foreach (ushort code in octree.Keys)
         {
-            
                 bool[] sidestorender = { DetermineSideRender(octree, code, olc.CalculateAdjacent(code, axisZ, -1)), DetermineSideRender(octree, code, olc.CalculateAdjacent(code, axisY, 1)), // -z, +y
                      DetermineSideRender(octree, code, olc.CalculateAdjacent(code, axisX, 1)), DetermineSideRender(octree, code, olc.CalculateAdjacent(code, axisX, -1)), // +x, -x
                      DetermineSideRender(octree, code, olc.CalculateAdjacent(code, axisZ, 1)), DetermineSideRender(octree, code, olc.CalculateAdjacent(code, axisY, -1))}; // +z, -y

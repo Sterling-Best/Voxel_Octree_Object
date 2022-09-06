@@ -91,14 +91,15 @@ public class Octree_Controller : MonoBehaviour
     {
         bool containssibling;
         ushort child8;
-        for (int d = chunkMaxDepth - 1; d >= 0; d--) //Start counting down from Parents of Max Depth.
+        ushort ichild;
+        for (int depth = chunkMaxDepth - 1; depth >= 0; depth--) //Start counting down from Parents of Max Depth.
         {
-            ushort depthcode = (ushort)Math.Pow(8, d);
-            for (ushort i = depthcode; i < (depthcode * 2); i++) //Going through each possibility of LocationCode for given depth
+            ushort depthCode = olc.generateDepthCode(depth);
+            for (ushort i = depthCode; i < (depthCode * 2); i++) //Going through each possibility of LocationCode for given depth
             {
                 if (!octree.ContainsKey(i)) //If Parent already exists, Don't
                 {
-                    ushort ichild = (ushort)(i << 3);
+                    ichild = (ushort)(i << 3);
                     if (octree.ContainsKey(ichild)) //Because of octree only need to check the first child
                     {
                         child8 = (ushort)(ichild + 8);
