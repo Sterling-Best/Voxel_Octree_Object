@@ -178,11 +178,11 @@ public class OT_LocCode
     //Decoding Morton Code
 
     //TODO: Finish LocToVec3() Documentation
-    public Vector3Int LocToVec3(int m)
+    public Vector3Int LocToVec3(int locationCode)
     {
-        int depthmodifier = (Convert.ToInt32(Math.Pow(8, Convert.ToInt32(Math.Log(m, 8)))));
-        m = (m ^ depthmodifier);
-        return new Vector3Int(Collapseby2(m >> 2), Collapseby2(m >> 1), Collapseby2(m));
+        int depthModifier = (Convert.ToInt32(Math.Pow(8, Convert.ToInt32(Math.Log(locationCode, 8)))));
+        locationCode = (locationCode ^ depthModifier);
+        return new Vector3Int(Collapseby2(mortonCode >> 2), Collapseby2(mortonCode >> 1), Collapseby2(mortonCode));
     }
 
     //TODO: Finish collapseby2() Documentation
