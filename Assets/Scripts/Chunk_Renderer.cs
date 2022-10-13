@@ -36,7 +36,7 @@ public class Chunk_Renderer
         int count = 0;
         if (octree.Keys.Count == 1) 
         {
-            if !(block_Manager.blocklist[octree[1]].opaque)
+            if (!block_Manager.blocklist[octree[1]].opaque)
             {
                 return;
             }
